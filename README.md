@@ -11,7 +11,7 @@ Strongly typed, 100% NativeAOT query engine: composable filter AST (DataListSche
 
 ---
 
-## Architecture (TanStack Two-Layer Split)
+## Architecture (Two-Layer Headless Split)
 
 - **`Lux.Query.Core`** — 100% headless C#, zero UI dependencies, `<IsAotCompatible>true</IsAotCompatible>`, `<IsTrimmable>true</IsTrimmable>`. Runs in Minimal APIs, background workers, CLI apps, and native C# .NET MAUI ViewModels.
 - **`Lux.Query`** — Multiplatform Blazor Web (Static SSR, Interactive Server, WebAssembly, Auto) & `.NET MAUI Blazor Hybrid` (`browser`, `ios`, `android`, `maccatalyst`, `windows`).

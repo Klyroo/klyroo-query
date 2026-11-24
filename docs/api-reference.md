@@ -252,7 +252,7 @@ The state of a data list as the user left it: search, filters, sort, page, page 
 ### `record FilterRule`
 *Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterNodes.cs`
 
-One condition on a field (or on a query-only filter, see `QueryFilter`). The filter key: the stable key of a field, or the name of a query-only filter. The comparison. The operand; `null` for `IsEmpty` and `IsNotEmpty`. Also match rows where the field is empty (null or an empty string). Replaces the `~none` entry of the Nuxt UI table.
+One condition on a field (or on a query-only filter, see `QueryFilter`). The filter key: the stable key of a field, or the name of a query-only filter. The comparison. The operand; `null` for `IsEmpty` and `IsNotEmpty`. Also match rows where the field is empty (null or an empty string).
 
 ### `record DataListFilterGroup`
 *Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterNodes.cs`

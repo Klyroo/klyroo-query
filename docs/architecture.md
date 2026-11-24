@@ -1,6 +1,6 @@
 # Architecture — Lux.Query
 
-Lux.Query follows the strict TanStack two-layer architecture shared across every repository in **LuxStack**:
+Lux.Query follows the strict headless two-layer architecture shared across every repository in **LuxStack**:
 
 ```text
 +-------------------------------------------------------------------+
