@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr" data-theme="dark">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -185,7 +185,11 @@ footer { padding: 36px 0; font-size: 12.5px; color: var(--text-muted); display: 
           <h1>Headless query engine<br /><span class="accent">&amp; reactive URL state.</span></h1>
         </div>
         <div>
-          <p class="lead">Moteur de requêtage fortement typé et 100% NativeAOT : AST de filtres composables (DataListSchema, DataListRequest, DataListFilterGroup), codecs d&#x27;URL réversibles, exécuteur InMemory et traduction SQL Entity Framework Core (EfAsyncQueryExecutor), accompagné de QueryState pour Blazor et MAUI.</p>
+          <p class="lead">Strongly typed, 100% NativeAOT query engine: composable filter AST (DataListSchema, DataListRequest, DataListFilterGroup), reversible URL query codecs, InMemory &amp; IQueryable evaluators, Entity Framework Core async SQL executor (EfAsyncQueryExecutor), and reactive QueryState for Blazor and .NET MAUI Hybrid.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+            <a class="btn btn-accent" href="../docs/getting-started.md">Read Documentation →</a>
+            <a class="btn" href="../docs/api-reference.md">API Reference</a>
+          </div>
           <div class="install-stack">
             <button class="cmd mono" type="button" onclick="copyCmd(this,'dotnet add package Lux.Query')">
               <span>$ dotnet add package <strong>Lux.Query</strong> <span class="comment"># Blazor + MAUI Hybrid</span></span>
@@ -196,7 +200,7 @@ footer { padding: 36px 0; font-size: 12.5px; color: var(--text-muted); display: 
               <span class="copy-tag">Copy</span>
             </button>
           </div>
-          <div class="platforms"><span class="plat mono">Headless C# / NativeAOT</span><span class="plat mono">.NET MAUI Native C#</span><span class="plat mono">Blazor Web &amp; MAUI Hybrid</span><span class="plat mono">Entity Framework Core</span></div>
+          <div class="platforms"><span class="plat mono">Headless C# / NativeAOT</span><span class="plat mono">.NET MAUI Native C#</span><span class="plat mono">Blazor Server / WASM / Auto</span><span class="plat mono">.NET MAUI Blazor Hybrid</span><span class="plat mono">Entity Framework Core</span></div>
         </div>
       </div>
 
@@ -232,7 +236,7 @@ footer { padding: 36px 0; font-size: 12.5px; color: var(--text-muted); display: 
     <div class="wrap">
       <div class="eyebrow mono">Why Lux.Query</div>
       <h2>Headless C# engine.<br /><span style="color:var(--accent)">Production-ready UI.</span></h2>
-      <div class="grid-4"><article class="card"><span class="tag mono">Typed AST</span><h3>Schéma &amp; AST de filtres typés</h3><p>Déclarez champs triables, filtres typés et recherche plein texte via DataListSchema.For&lt;T&gt;() sans aucune chaîne magique.</p></article><article class="card"><span class="tag mono">Any Backend</span><h3>InMemory, IQueryable &amp; EF Core</h3><p>Exécutez le même DataListRequest en mémoire (ExecuteInMemory), sur LINQ IQueryable ou en SQL asynchrone via EfAsyncQueryExecutor.</p></article><article class="card"><span class="tag mono">URL Sync</span><h3>Codecs d&#x27;URL &amp; QueryState</h3><p>Sérialisation réversible des filtres, tris et pages dans la query-string avec gestion de l&#x27;historique et support mobile WebView.</p></article><article class="card"><span class="tag mono">NativeAOT</span><h3>100% Headless &amp; Zéro UI</h3><p>Lux.Query.Core n&#x27;a aucune dépendance Blazor : utilisez-le dans vos APIs minimales NativeAOT, Workers ou ViewModels MAUI.</p></article></div>
+      <div class="grid-4"><article class="card"><span class="tag mono">Typed AST</span><h3>Typed Schema &amp; Filter AST</h3><p>Declare searchable, sortable, and filterable fields with DataListSchema.For&lt;T&gt;() with zero magic strings and full compile-time safety.</p></article><article class="card"><span class="tag mono">Any Backend</span><h3>InMemory, IQueryable &amp; EF Core</h3><p>Run the exact same DataListRequest in memory (ExecuteInMemory), over LINQ IQueryable, or translated to async SQL via EfAsyncQueryExecutor.</p></article><article class="card"><span class="tag mono">URL Sync</span><h3>URL Query Codecs &amp; QueryState</h3><p>Reversible serialization of filters, sorts, and paging into the query string with browser history control and mobile WebView support.</p></article><article class="card"><span class="tag mono">NativeAOT</span><h3>100% Headless &amp; Zero UI in .Core</h3><p>Lux.Query.Core has zero UI dependencies: compile it in NativeAOT Minimal APIs, background workers, or native .NET MAUI ViewModels.</p></article></div>
     </div>
   </section>
 
@@ -248,7 +252,7 @@ footer { padding: 36px 0; font-size: 12.5px; color: var(--text-muted); display: 
 var schema = DataListSchema.For&lt;Product&gt;(s =&gt; s
     .RowKey(p =&gt; p.Id)
     .Search(p =&gt; p.Name)
-    .Field(p =&gt; p.Price, f =&gt; f.Key(&quot;price&quot;).Sortable()));
+    .Field(p =&gt; p.Price, f =&gt; f.Key(&quot;price&quot;).Sortable().Filterable()));
 
 var request = new DataListRequest(
     new DataListPaging.Offset(0, 25),
@@ -264,7 +268,7 @@ var result = schema.ExecuteInMemory(products, request);</code></pre>
 
 @code {
     // Two-way synchronized URL parameter (?page=3&amp;sort=price:desc)
-    private void GoToPage(int page) =&gt; Query.Set(&quot;page&quot;, page.ToString());
+    private void GoToPage(int page) =&gt; Query.Set(&quot;page&quot;, page.ToString(), QueryHistory.Push);
     private string CurrentPage =&gt; Query.Get(&quot;page&quot;) ?? &quot;1&quot;;
 }</code></pre>
         </div>
@@ -274,12 +278,27 @@ var result = schema.ExecuteInMemory(products, request);</code></pre>
 
   <section class="band">
     <div class="wrap">
-      <div class="eyebrow mono">Package Exports &amp; Components</div>
+      <div class="eyebrow mono">Exhaustive Documentation</div>
+      <h2>Guides, Architecture &amp; API Reference</h2>
+      <div class="grid-4" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+            <a class="card" href="../docs/getting-started.md"><span class="tag mono">GUIDE</span><h3>Getting Started</h3><p>Package installation, DI setup, namespace imports, and your first example.</p></a>
+            <a class="card" href="../docs/architecture.md"><span class="tag mono">CORE + UI</span><h3>Architecture</h3><p>Strict two-layer headless NativeAOT Core vs Blazor &amp; MAUI Hybrid UI split.</p></a>
+            <a class="card" href="../docs/api-reference.md"><span class="tag mono">EXHAUSTIVE API</span><h3>Complete API Reference</h3><p>Every public class, enum, property, method, and Razor parameter extracted from source.</p></a>
+            <a class="card" href="../docs/maui-and-aot.md"><span class="tag mono">MULTIPLATFORM</span><h3>.NET MAUI &amp; NativeAOT</h3><p>Setup for iOS, Android, macOS Catalyst, Windows, and NativeAOT builds.</p></a>
+            <a class="card" href="../docs/recipes.md"><span class="tag mono">RECIPES</span><h3>Recipes &amp; Testing</h3><p>Production patterns and xUnit / bUnit testing examples.</p></a>
+            <a class="card" href="http://localhost:5180/docs/lux-query"><span class="tag mono">PLAYGROUND</span><h3>Interactive Playground Docs</h3><p>Live documentation page with interactive examples and XML-backed API tables.</p></a>
+            </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="eyebrow mono">Package Exports</div>
       <h2>Included in Lux.Query</h2>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Export</th><th>Layer</th><th>NuGet Package</th><th>Description</th></tr></thead>
-          <tbody><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">DataListSchema</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">Builder typé des champs recherchables, triables et filtrables.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">DataListRequest</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">AST immuable : pagination Offset/Cursor, tris, filtres et recherche.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">QueryCodecs</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">Sérialisation réversible des filtres et tris vers la query-string.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">EfAsyncQueryExecutor</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.EntityFrameworkCore</td><td style="color:var(--text-muted)">Exécution SQL asynchrone traduite via Entity Framework Core.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">QueryState</td><td><span class="mono layer-ui">UI</span></td><td class="mono">Lux.Query</td><td style="color:var(--text-muted)">Synchronisation réactive d&#x27;URL pour Blazor Web et MAUI Hybrid.</td></tr></tbody>
+          <tbody><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">IQueryCodec&lt;T&gt;</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">Converts a value to and from the text of a URL query parameter. The same codecs serve the components (URL-synced state) and an API server that parses the URLs they produce, which is why they live in this Blazor-free package. The type of the value.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">QueryCodecs</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">The built-in `IQueryCodec{T}`s. Numbers and dates use the invariant culture, so a URL means the same thing on every machine. A codec never throws on input: text that is not a value makes `TryParse` return false.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">QueryRange&lt;T&gt;</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">A range of values with either end optional, as `Range{T}` reads and writes it. The lower end, or null for no lower bound. The upper end, or null for no upper bound.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">InMemoryDataList</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">Runs a `DataListRequest` against an in-memory list: search, filter tree, stable multi-key sort, offset or cursor paging, total count and facets. The predicate is built as an expression (see the internal `FilterExpressions`) and compiled, so the IQueryable applier can reuse the same definition of every operator.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">DataListJsonContext</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">Public class</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">DataListPaging</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">Public record</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">Offset</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">Skip a number of rows, then take a page. Rows to skip. Page size.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">Cursor</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">Keyset paging: the page after an opaque cursor. The cursor of the previous page (`NextCursor`), or `null` for the first page. Page size. Also compute `TotalCount`.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">None</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">No paging: the whole result.</td></tr><tr><td class="mono" style="font-weight:600;color:var(--text-strong)">DataListSort</td><td><span class="mono layer-core">Core</span></td><td class="mono">Lux.Query.Core</td><td style="color:var(--text-muted)">One sort rule. The key of a sortable field. Sort from the largest to the smallest. Nulls always sort last.</td></tr></tbody>
         </table>
       </div>
     </div>
