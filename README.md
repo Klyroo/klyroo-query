@@ -1,5 +1,7 @@
 # Lux.Query (LuxStack)
 
+[![CI](https://github.com/luxstack/lux-query/actions/workflows/ci.yml/badge.svg)](https://github.com/luxstack/lux-query/actions/workflows/ci.yml) [![NuGet](https://img.shields.io/badge/NuGet-0.1.0--preview.1-004880.svg)](https://www.nuget.org/packages/Lux.Query.Core) [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/) [![NativeAOT](https://img.shields.io/badge/NativeAOT-Compatible-10b981.svg)](https://luxstack.dev/why) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+
 > **Headless NativeAOT Query AST, URL codecs, IQueryable applier, EF Core & QueryState**
 
 Strongly typed, 100% NativeAOT query engine: composable filter AST (DataListSchema, DataListRequest, DataListFilterGroup), reversible URL query codecs, InMemory & IQueryable evaluators, Entity Framework Core async SQL executor (EfAsyncQueryExecutor), and reactive QueryState for Blazor and .NET MAUI Hybrid.
