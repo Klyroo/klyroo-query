@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lux.Query.Core/Lux.Query.Core.csproj" />
+    <Project Path="src/Lux.Query/Lux.Query.csproj" />
+    <Project Path="src/Lux.Query.EntityFrameworkCore/Lux.Query.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lux.Query.Tests/Lux.Query.Tests.csproj" />
+  </Folder>
+  <Folder Name="/examples/">
+    <Project Path="examples/AotQueryExample/AotQueryExample.csproj" />
+  </Folder>
+</Solution>
