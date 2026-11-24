@@ -1,8 +1,8 @@
-using Blux.UI.Tools.Query;
+using Lux.Query;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
-namespace Blux.UI.Tools;
+namespace Lux.Query;
 
 /// <summary>Whether a change of the URL adds a history entry (the Back button undoes it) or replaces the current one.</summary>
 public enum QueryHistory
@@ -17,7 +17,7 @@ public enum QueryHistory
 /// <summary>
 /// The query string of the current URL as state: read it, change it, follow it when it changes. The URL is the single source of truth, so a
 /// link, the Back button and a URL typed in the address bar all change what the components bound to it show, and a page can be shared
-/// with its state. One instance per circuit or per browser tab (it is scoped), registered by <c>AddBluxUiTools</c>.
+/// with its state. One instance per circuit or per browser tab (it is scoped), registered by <c>AddLuxQuery</c>.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -69,7 +69,7 @@ public sealed class QueryState : IDisposable
     /// <summary>How long to wait for an own navigation before concluding it was cancelled and showing what the URL holds again.</summary>
     internal TimeSpan RollbackDelay { get; init; } = TimeSpan.FromSeconds(3);
 
-    /// <summary>Creates the service. <c>AddBluxUiTools</c> registers it scoped; create it yourself only in a test.</summary>
+    /// <summary>Creates the service. <c>AddLuxQuery</c> registers it scoped; create it yourself only in a test.</summary>
     public QueryState(NavigationManager navigation)
     {
         ArgumentNullException.ThrowIfNull(navigation);

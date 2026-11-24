@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>A node of the filter tree: a <see cref="FilterRule"/> or a <see cref="DataListFilterGroup"/>.</summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]

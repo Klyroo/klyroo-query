@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The fluent description of a <see cref="DataListSchema{T}"/>, passed to <see cref="DataListSchema.For{T}"/>:

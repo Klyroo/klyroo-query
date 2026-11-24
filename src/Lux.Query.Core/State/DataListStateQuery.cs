@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// Converts a <see cref="DataListState"/> to and from URL query keys, as plain functions (no Blazor, no <c>NavigationManager</c>). Keys, under an

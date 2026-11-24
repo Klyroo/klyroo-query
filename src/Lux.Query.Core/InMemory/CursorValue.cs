@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The text form of a sort value inside a cursor. Unlike <see cref="TextConvert.Format"/> it keeps an empty string distinct from null (null sorts last,

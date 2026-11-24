@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The half-open range <c>[start, next)</c> that a date filter value stands for, in the user's time zone: a <see cref="FilterValue.Date"/> is that local day

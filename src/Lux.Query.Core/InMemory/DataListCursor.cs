@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The cursor of the in-memory executor: URL-safe base64 of a JSON array <c>[version, sortSignature, rowKey, sortValue...]</c> describing the last

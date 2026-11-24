@@ -1,4 +1,4 @@
-namespace Blux.UI.Tools;
+namespace Lux.Query;
 
 /// <summary>One parameter of a query string: the decoded key and value, and the text it was read from (kept so an unknown parameter is written back untouched).</summary>
 internal readonly record struct QueryPair(string Key, string Value, string Raw)

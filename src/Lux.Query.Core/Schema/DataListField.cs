@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>A registered field of the row type.</summary>
 internal sealed class DataListField<T>

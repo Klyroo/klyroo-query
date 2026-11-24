@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// Compares two field values for sorting. Strings use a natural order that ignores case and accents and reads digit runs as numbers

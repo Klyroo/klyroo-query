@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The two queries of a request, for the caller to run: <see cref="Matching"/> counts the rows (<c>CountAsync()</c>) and <see cref="Page"/> loads the page

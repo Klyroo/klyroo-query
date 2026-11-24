@@ -1,6 +1,6 @@
-using Blux.UI.Tools.Query;
+using Lux.Query;
 
-namespace Blux.UI.Tools;
+namespace Lux.Query;
 
 /// <summary>
 /// One query key as a typed value. A key that is absent, or whose text the codec cannot read, gives the default; a value equal to the

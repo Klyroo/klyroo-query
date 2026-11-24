@@ -1,4 +1,4 @@
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// What a <see cref="DataListOptionsProvider"/> is asked for: one page of options for a search. Both kinds of paging are carried: a source that pages by position reads

@@ -1,5 +1,4 @@
-using Blux.UI.Tools;
-using Blux.UI.Tools.Query;
+using Lux.Query;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

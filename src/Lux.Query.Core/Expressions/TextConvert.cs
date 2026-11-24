@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// Converts between the text form of a value (URL, option values, facet values, cursors) and a CLR value of the field type, always in the invariant

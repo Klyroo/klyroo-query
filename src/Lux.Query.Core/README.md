@@ -1,11 +1,11 @@
-# Blux.UI.Tools.Query
+# Lux.Query
 
-The Blazor-free half of [Blux.UI.Tools](https://www.nuget.org/packages/Blux.UI.Tools): the request, filter and result
+The Blazor-free half of [Lux.Query](https://www.nuget.org/packages/Lux.Query): the request, filter and result
 records that a data list sends to a provider, the schema that says what a row type allows, the URL form of a list's
-state, and an in-memory executor. It has no ASP.NET Core and no Blux.UI dependency, so an API server can reference it to
+state, and an in-memory executor. It has no ASP.NET Core and no Lux.UI dependency, so an API server can reference it to
 answer the same requests the components make.
 
-It also holds the URL codecs of the URL state of Blux.UI.Tools (`IQueryCodec<T>` and `QueryCodecs`: numbers, dates, enums, lists, ranges), so an API server can parse the query strings the components write.
+It also holds the URL codecs of the URL state of Lux.Query (`IQueryCodec<T>` and `QueryCodecs`: numbers, dates, enums, lists, ranges), so an API server can parse the query strings the components write.
 
 ## The schema
 
@@ -142,8 +142,8 @@ flat row type (`Select(e => new EmployeeRow ...)` as above) is still the leanest
   per list (500) and 16 levels of groups; set the first two with `.MaxFilterRules(n)` and `.MaxListValues(n)`.
 - **JSON.** Enums are camelCase strings like the URL names; integers are rejected.
 - **Raw expressions** (for a database) are parameterized through closure-like holders, use `array.Contains(x)` for lists, and contain no `ToLower`. They are
-  proven against EF Core and SQLite in `tests/Blux.UI.Tools.Query.EfTests`.
-- **NativeAOT.** The in-memory executor runs in a NativeAOT image (`tests/Blux.UI.Tools.Query.AotSmoke` publishes and runs it in CI): expression trees are interpreted there, a list of
+  proven against EF Core and SQLite in `tests/Lux.Query.EfTests`.
+- **NativeAOT.** The in-memory executor runs in a NativeAOT image (`tests/Lux.Query.AotSmoke` publishes and runs it in CI): expression trees are interpreted there, a list of
   option values is a chain of equalities, and the operators of date and decimal types are kept for the interpreter. The `IQueryable` applier builds generic `Queryable` calls over the
   types of your fields at runtime, which needs a runtime that can create generic instantiations (CoreCLR, Mono): that is where EF Core runs anyway, and the few reflection points carry
   justified suppressions. The JSON wire model (`DataListJsonContext`) round-trips a request in that image too. Boolean filter values are `FilterValue.Boolean` and `"type": "boolean"` on the wire.

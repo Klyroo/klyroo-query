@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Blux.UI.Tools;
+namespace Lux.Query;
 
 /// <summary>Equality of query values: by value (arrays element by element), and a moment includes its offset, because 10:00+01:00 is not 09:00Z in a URL.</summary>
 internal static class QueryEquality

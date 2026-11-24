@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The value of a <see cref="FilterRule"/>. A closed hierarchy: <see cref="Text"/>, <see cref="Number"/>, <see cref="Boolean"/>,

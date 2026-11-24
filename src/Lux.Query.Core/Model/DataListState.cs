@@ -1,4 +1,4 @@
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The state of a data list as the user left it: search, filters, sort, page, page size, layout and, for cursor paging, the cursor.

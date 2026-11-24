@@ -1,4 +1,4 @@
-using Blux.UI.Tools.Query;
+using Lux.Query;
 
 var data = new[] { new Item(1, "Alpha", 10), new Item(2, "Beta", 30), new Item(3, "Gamma", 20) };
 var schema = DataListSchema.For<Item>(s => s

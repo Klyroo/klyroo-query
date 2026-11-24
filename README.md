@@ -43,7 +43,7 @@ builder.Services.AddLuxQuery();
 ### Headless Core (`Lux.Query.Core`)
 
 ```csharp
-using Blux.UI.Tools.Query;
+using Lux.Query;
 
 var schema = DataListSchema.For<Product>(s => s
     .RowKey(p => p.Id)

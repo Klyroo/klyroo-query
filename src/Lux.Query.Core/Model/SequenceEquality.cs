@@ -1,4 +1,4 @@
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>Value equality for the list members of the records (records compare lists by reference otherwise).</summary>
 internal static class SequenceEquality

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// Converts a value to and from the text of a URL query parameter. The same codecs serve the components (URL-synced state) and an API

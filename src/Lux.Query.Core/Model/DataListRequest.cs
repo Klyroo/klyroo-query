@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>How a request pages: <see cref="Offset"/>, <see cref="Cursor"/> or <see cref="None"/>.</summary>
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]

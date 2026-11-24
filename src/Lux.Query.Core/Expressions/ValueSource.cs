@@ -2,7 +2,7 @@ using System.Collections;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// Where a filter, search or facet reads its values: one scalar value per row, or the elements of a collection of the row (<c>e.Tags</c> then

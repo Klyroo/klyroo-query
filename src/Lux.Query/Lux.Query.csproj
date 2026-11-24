@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>Blux.UI.Tools</RootNamespace>
+    <RootNamespace>Lux.Query</RootNamespace>
     <PackageId>Lux.Query</PackageId>
     <Description>LuxStack Query for Blazor Web &amp; .NET MAUI Hybrid: URL QueryState synchronization built on Lux.Query.Core.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

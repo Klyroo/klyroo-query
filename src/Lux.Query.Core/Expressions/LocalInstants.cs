@@ -1,4 +1,4 @@
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The instant of a local day and time in a time zone, with one rule for the two cases a wall clock does not name one instant. The server (the day and unit bounds of <see cref="DateUnit"/>), the filter editor

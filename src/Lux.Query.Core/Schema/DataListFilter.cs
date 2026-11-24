@@ -1,4 +1,4 @@
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>How a number filter editor shows its value.</summary>
 public enum DataListNumberDisplay

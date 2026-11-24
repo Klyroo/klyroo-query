@@ -1,6 +1,6 @@
-using Blux.UI.Tools.Query;
+using Lux.Query;
 
-namespace Blux.UI.Tools;
+namespace Lux.Query;
 
 /// <summary>
 /// A record whose properties are query keys, read and written together: one write is one navigation and one history entry. Each property has

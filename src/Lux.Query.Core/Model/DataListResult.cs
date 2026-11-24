@@ -1,4 +1,4 @@
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>One option of a facet and the number of rows that have it.</summary>
 /// <param name="Value">The value as text: invariant culture, <c>true</c>/<c>false</c>, enum name, ISO dates.</param>

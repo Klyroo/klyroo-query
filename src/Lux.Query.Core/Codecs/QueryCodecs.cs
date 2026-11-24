@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The built-in <see cref="IQueryCodec{T}"/>s. Numbers and dates use the invariant culture, so a URL means the same thing on every machine.

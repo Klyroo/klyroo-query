@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// The text form of a filter rule's value in a URL: tokens separated by commas, where <c>,</c> <c>~</c> and <c>%</c> inside a value are written

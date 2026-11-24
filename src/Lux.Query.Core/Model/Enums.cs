@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>The 13 comparison operators of a filter rule. Each filter kind allows a subset (see <see cref="DataListFilter"/>).</summary>
 [JsonConverter(typeof(WireEnumConverter<FilterOperator>))]

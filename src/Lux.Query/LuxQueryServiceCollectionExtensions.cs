@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Blux.UI.Tools;
+namespace Lux.Query;
 
 public static class LuxQueryServiceCollectionExtensions
 {

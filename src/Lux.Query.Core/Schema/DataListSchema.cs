@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// Describes what a data list can do with a row type: its fields, which are sortable or filterable, the search fields, the query-only filters,

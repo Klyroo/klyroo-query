@@ -29,9 +29,9 @@ builder.Services.AddLuxQuery();
 In `_Imports.razor`:
 
 ```razor
-@using Blux.UI
-@using Blux.UI.Tools
-@using Blux.UI.Tools.Query
+@using Lux.UI
+@using Lux.Query
+@using Lux.Query
 ```
 
 ## 4. First Example
@@ -39,7 +39,7 @@ In `_Imports.razor`:
 ### Headless C# (`Lux.Query.Core`)
 
 ```csharp
-using Blux.UI.Tools.Query;
+using Lux.Query;
 
 var schema = DataListSchema.For<Product>(s => s
     .RowKey(p => p.Id)

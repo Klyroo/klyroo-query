@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// A field of the row type as an expression (<c>e =&gt; e.Department.Name</c>). It can be bound to any parameter, either as written (for a database

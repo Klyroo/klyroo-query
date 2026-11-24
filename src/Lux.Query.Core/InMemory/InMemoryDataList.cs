@@ -1,4 +1,4 @@
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// Runs a <see cref="DataListRequest"/> against an in-memory list: search, filter tree, stable multi-key sort, offset or cursor paging, total count

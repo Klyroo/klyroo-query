@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <RootNamespace>Blux.UI.Tools.Query</RootNamespace>
+    <RootNamespace>Lux.Query</RootNamespace>
     <PackageId>Lux.Query.Core</PackageId>
     <Description>LuxStack Query Core: Headless request, filter, sort, URL codec, IQueryable applier and in-memory executor. Zero UI dependency, NativeAOT compatible.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

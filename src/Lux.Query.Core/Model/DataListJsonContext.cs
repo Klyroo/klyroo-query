@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>
 /// System.Text.Json source-generated metadata for the wire records (request, filter tree, values, facets, state), so they serialize without

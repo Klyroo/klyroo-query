@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Blux.UI.Tools.Query;
+namespace Lux.Query;
 
 /// <summary>A value carried in a closure-like holder, so that a database provider sees a member access (and emits a parameter) rather than a literal.</summary>
 internal sealed class ValueBox(object? value)
@@ -30,7 +30,7 @@ internal static class TextFold
 /// <item><description><b>Raw</b> (<c>inMemory: false</c>), for the IQueryable applier of a later step: the expression as written, <c>string.Contains</c> without any
 /// <c>ToLower</c> (the database collation decides about case and accents), no null guards, values read through <see cref="ValueBox"/> members so that
 /// providers emit parameters, and <c>array.Contains(x)</c> for lists (an <c>IN</c> clause). Used by the IQueryable applier (<see cref="QueryableDataList"/>); proven against
-/// EF Core and SQLite in <c>Blux.UI.Tools.Query.EfTests</c>, with no EF dependency in this package.</description></item>
+/// EF Core and SQLite in <c>Lux.Query.EfTests</c>, with no EF dependency in this package.</description></item>
 /// </list>
 /// Dates are half-open ranges <c>[start, next)</c> computed in the request's time zone.
 /// </summary>
