@@ -7,7 +7,7 @@
 - [ ] `fix`: bug fix
 - [ ] `feat`: new feature
 - [ ] `docs` / `test` / `refactor` / `ci` / `chore`
-- [ ] **Breaking change** (public API, CSS token, behavior): described below and in `CHANGELOG.md`
+- [ ] **Breaking change** (public API, behavior): described below and in `CHANGELOG.md`
 
 ## Checklist
 

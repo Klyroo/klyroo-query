@@ -7,14 +7,10 @@ tests, versions and releases, so a change usually belongs to exactly one of them
 ## Prerequisites
 
 - **.NET SDK 10** (`global.json` pins the feature band and rolls forward). Install from [dot.net](https://dot.net).
-- Some projects reference sibling Klyroo repositories by relative path (`../klyroo-ui`, ...). Clone the
-  repositories you need next to each other:
+- This repository builds on its own: its projects reference no sibling Klyroo repository.
 
   ```bash
-  mkdir klyroo && cd klyroo
   git clone https://github.com/klyroo/klyroo-query.git
-  # plus the siblings it references, for example:
-  git clone https://github.com/klyroo/klyroo-ui.git
   ```
 
 ## Build, test, format
@@ -64,7 +60,7 @@ of suppressing it, and justify any `#pragma` or `[SuppressMessage]` in the code.
 ## Review
 
 A maintainer reviews every pull request. Expect questions about the public API, render modes (Static SSR,
-Interactive Server, WebAssembly, MAUI Blazor Hybrid), accessibility and NativeAOT compatibility. At least one
+Interactive Server, WebAssembly, MAUI Blazor Hybrid) and NativeAOT compatibility. At least one
 maintainer approval and a green CI are required; the pull request is squash-merged, so its title must be a valid
 Conventional Commit.
 

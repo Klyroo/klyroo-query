@@ -1,138 +1,160 @@
 # Klyroo.Query
 
-*Part of [Klyroo](https://klyroo.dev): Build better. Compose freely.*
+A typed query model for lists of data: search, filter, sort, page and facet requests, their URL form, and their execution over in-memory collections and Entity Framework Core, for .NET developers who build data lists in Blazor, .NET MAUI Blazor Hybrid or an API.
 
-[![CI](https://github.com/klyroo/klyroo-query/actions/workflows/ci.yml/badge.svg)](https://github.com/klyroo/klyroo-query/actions/workflows/ci.yml) [![NuGet](https://img.shields.io/badge/NuGet-0.1.0--preview.1-004880.svg)](https://www.nuget.org/packages/Klyroo.Query.Core) [![.NET 10](https://img.shields.io/badge/.NET-10.0-512BD4.svg)](https://dotnet.microsoft.com/) [![NativeAOT](https://img.shields.io/badge/NativeAOT-Compatible-10b981.svg)](https://klyroo.dev/why) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![CI](https://github.com/klyroo/klyroo-query/actions/workflows/ci.yml/badge.svg)](https://github.com/klyroo/klyroo-query/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/vpre/Klyroo.Query.svg)](https://www.nuget.org/packages/Klyroo.Query)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-> **Headless NativeAOT Query AST, URL codecs, IQueryable applier, EF Core & QueryState**
+You describe a row type once, with a schema built from lambda expressions. A request (filter tree, sort, search, paging, facets) is plain data that serializes to JSON, runs against an in-memory list or an `IQueryable` with the same operators, and has a URL form that survives a round trip. The engine, `Klyroo.Query.Core`, has no UI or ASP.NET Core dependency and runs wherever .NET 10 runs; `Klyroo.Query` adds `QueryState`, which keeps Blazor components in sync with the query string.
 
-Strongly typed, 100% NativeAOT query engine: composable filter AST (DataListSchema, DataListRequest, DataListFilterGroup), reversible URL query codecs, InMemory & IQueryable evaluators, Entity Framework Core async SQL executor (EfAsyncQueryExecutor), and reactive QueryState for Blazor and .NET MAUI Hybrid.
+## Features
 
-[![MAUI Hybrid](https://img.shields.io/badge/.NET%20MAUI-Blazor%20Hybrid-8b5cf6.svg)](./docs/maui-and-aot.md)
+- **Typed schema**: declare sortable fields, filters, search fields, collection fields and defaults with expressions such as `c => c.Country!.Name`, so there are no field names to mistype and nothing reflects over strings.
+- **Filter tree**: five filter kinds (text, option, boolean, number, date), 13 operators, nested AND/OR groups, and an include-empty flag on a rule.
+- **One request, several backends**: `ExecuteInMemory` runs a request over a collection, and `Apply` turns the same request into `IQueryable` operators that EF Core translates to SQL.
+- **Paging and facets**: offset paging, keyset cursor paging with a stable sort (nulls last, row key as the tie-break), and option counts per filter.
+- **Request validation**: `Sanitize` drops unknown keys, operators the filter does not allow, malformed values and oversized pages before a request reaches your data.
+- **URL codecs**: `DataListStateQuery` writes a list state as query keys (`q`, `p`, `s`, `f.status`) and reads it back without throwing, and `QueryCodecs` converts single values.
+- **URL state for Blazor**: `QueryState` binds query keys to typed values and records, with history control and links that work in static server rendering.
+- **Trim-safe core**: `Klyroo.Query.Core` is marked trimmable and AOT compatible, and ships a source-generated JSON context for the wire records.
 
----
+## Packages
 
-## Architecture (Two-Layer Headless Split)
-
-- **`Klyroo.Query.Core`** — 100% headless C#, zero UI dependencies, `<IsAotCompatible>true</IsAotCompatible>`, `<IsTrimmable>true</IsTrimmable>`. Runs in Minimal APIs, background workers, CLI apps, and native C# .NET MAUI ViewModels.
-- **`Klyroo.Query`** — Multiplatform Blazor Web (Static SSR, Interactive Server, WebAssembly, Auto) & `.NET MAUI Blazor Hybrid` (`browser`, `ios`, `android`, `maccatalyst`, `windows`).
-- **`Klyroo.Query.EntityFrameworkCore`** — Optional Entity Framework Core async SQL execution adapter.
-
-## Highlights
-
-- **Typed Schema & Filter AST** (`Typed AST`) — Declare searchable, sortable, and filterable fields with DataListSchema.For<T>() with zero magic strings and full compile-time safety.
-- **InMemory, IQueryable & EF Core** (`Any Backend`) — Run the exact same DataListRequest in memory (ExecuteInMemory), over LINQ IQueryable, or translated to async SQL via EfAsyncQueryExecutor.
-- **URL Query Codecs & QueryState** (`URL Sync`) — Reversible serialization of filters, sorts, and paging into the query string with browser history control and mobile WebView support.
-- **100% Headless & Zero UI in .Core** (`NativeAOT`) — Klyroo.Query.Core has zero UI dependencies: compile it in NativeAOT Minimal APIs, background workers, or native .NET MAUI ViewModels.
-
-## Prerequisites
-
-- .NET 10 SDK or later.
-- A Blazor Web App (Static SSR, Interactive Server, WebAssembly or Auto) or a .NET MAUI Blazor Hybrid app for the UI
-  package; the `.Core` package runs anywhere .NET 10 runs, NativeAOT included.
-- For .NET MAUI: the `maui` workload (`dotnet workload install maui`).
+| Package | Description |
+| :--- | :--- |
+| [`Klyroo.Query.Core`](https://www.nuget.org/packages/Klyroo.Query.Core) | Schema, request, filter and result model, URL codecs, in-memory executor and `IQueryable` applier. No UI dependency. |
+| [`Klyroo.Query`](https://www.nuget.org/packages/Klyroo.Query) | `QueryState`, `QueryValue<T>` and `QueryGroup<TRecord>` for Blazor, and the `AddKlyrooQuery` registration. Depends on `Klyroo.Query.Core`. |
+| [`Klyroo.Query.EntityFrameworkCore`](https://www.nuget.org/packages/Klyroo.Query.EntityFrameworkCore) | `EfAsyncQueryExecutor`, which runs the queries built by `Klyroo.Query.Core` with the async operators of EF Core. |
 
 ## Installation
 
 ```bash
-dotnet add package Klyroo.Query.Core   # Headless C# / NativeAOT / MAUI C#
-dotnet add package Klyroo.Query        # Blazor Web & .NET MAUI Blazor Hybrid
-dotnet add package Klyroo.Query.EntityFrameworkCore   # Entity Framework Core async SQL executor
+dotnet add package Klyroo.Query.Core --prerelease                  # the engine, for any .NET 10 project
+dotnet add package Klyroo.Query --prerelease                       # adds QueryState for Blazor (brings Klyroo.Query.Core)
+dotnet add package Klyroo.Query.EntityFrameworkCore --prerelease   # optional, for EF Core
 ```
 
-Register services in `Program.cs` (Blazor Web App) or `MauiProgram.cs` (.NET MAUI Blazor Hybrid):
-
-```csharp
-builder.Services.AddKlyrooQuery();
-```
-
-## Quick Start
-
-### Headless Core (`Klyroo.Query.Core`)
+In a Blazor app, register the service and import the namespace. There is no stylesheet to add.
 
 ```csharp
 using Klyroo.Query;
 
-var schema = DataListSchema.For<Product>(s => s
-    .RowKey(p => p.Id)
-    .Search(p => p.Name)
-    .Field(p => p.Price, f => f.Key("price").Sortable().Filterable()));
-
-var request = new DataListRequest(
-    new DataListPaging.Offset(0, 25),
-    [new DataListSort("price", Descending: true)],
-    DataListFilterGroup.Empty,
-    new DataListSearch("Monitor"));
-
-var result = schema.ExecuteInMemory(products, request);
+builder.Services.AddKlyrooQuery();
 ```
 
-### Blazor Web & .NET MAUI Hybrid (`Klyroo.Query`)
+```razor
+@using Klyroo.Query
+```
+
+## Quick start
+
+Headless first. This runs in a console app, a worker or an API, with only `Klyroo.Query.Core` installed.
+
+```csharp
+using Klyroo.Query;
+
+var schema = DataListSchema.For<Customer>(s => s
+    .RowKey(c => c.Id)
+    .Search(c => c.Name, c => c.Email)
+    .Field(c => c.Name, f => f.Sortable())
+    .Field(c => c.Age, f => f.Sortable().Filter(DataListFilter.Number(min: 0)))
+    .Field(c => c.Status, f => f.Filter(DataListFilter.Option()))
+    .DefaultSort(c => c.Name));
+
+var request = new DataListRequest(
+    new DataListPaging.Offset(Skip: 0, Take: 25),
+    [new DataListSort("age", Descending: true)],
+    DataListFilterGroup.And(new FilterRule("status", FilterOperator.Is, new FilterValue.Text("Active"))),
+    new DataListSearch("a"));
+
+DataListResult<Customer> page = schema.ExecuteInMemory(customers, request);
+// page.TotalCount == 2, page.Items[0].Name == "Alice Martin"
+```
+
+`customers` is any `IReadOnlyList<Customer>`, where `Customer` is a record with `Id`, `Name`, `Email`, `Status` (an enum) and `Age`.
+
+Then Blazor. This component binds the `q` key of the URL to a search box. A link to `/customers?q=dan`, the Back button and the address bar all change what it shows, and an empty search leaves no key in the URL. It needs an interactive render mode.
 
 ```razor
+@namespace Samples
+@implements IDisposable
 @inject QueryState Query
 
+<input type="search" placeholder="Search customers" value="@_search.Value" @oninput="OnInput" />
+
+<ul>
+    @foreach (var customer in Matches())
+    {
+        <li>@customer.Name</li>
+    }
+</ul>
+
 @code {
-    // Two-way synchronized URL parameter (?page=3&sort=price:desc)
-    private void GoToPage(int page) => Query.Set("page", page.ToString(), QueryHistory.Push);
-    private string CurrentPage => Query.Get("page") ?? "1";
+    private QueryValue<string> _search = default!;
+
+    protected override void OnInitialized()
+    {
+        // The default value ("") is left out of the URL. RendererInfo says whether this render can navigate.
+        _search = Query.Bind("q", QueryCodecs.String, "", RendererInfo);
+        _search.Changed += OnSearchChanged;
+    }
+
+    private void OnInput(ChangeEventArgs e) => _search.Value = e.Value?.ToString() ?? "";
+
+    // Changed is raised on the thread that changed the URL, so go through InvokeAsync before rendering.
+    private void OnSearchChanged() => _ = InvokeAsync(StateHasChanged);
+
+    private IEnumerable<Customer> Matches() =>
+        SampleData.Customers.Where(c => c.Name.Contains(_search.Value, StringComparison.OrdinalIgnoreCase));
+
+    public void Dispose()
+    {
+        _search.Changed -= OnSearchChanged;
+        _search.Dispose();
+    }
 }
 ```
 
 ## Documentation
 
-| Guide | Description |
+| | |
 | :--- | :--- |
-| [Online documentation](https://docs.klyroo.dev/query) | Guides, live examples and API reference |
-| [Getting Started](./docs/getting-started.md) | Installation, DI registration, stylesheets, and first working example |
-| [Architecture](./docs/architecture.md) | Headless `.Core` vs UI split, NativeAOT guarantees, and platform matrix |
-| [API Reference](./docs/api-reference.md) | Exhaustive reference of every public class, enum, property, method, and Razor parameter |
-| [MAUI & NativeAOT](./docs/maui-and-aot.md) | `.NET MAUI Blazor Hybrid` (`iOS`, `Android`, `macOS`, `Windows`) and NativeAOT deployment |
-| [Recipes & Testing](./docs/recipes.md) | End-to-end production patterns and `xUnit` / `bUnit` testing recipes |
-| [AI Agent Skill](./skills/klyroo-query/SKILL.md) | Machine-readable guidance for coding agents |
+| [Getting started](docs/getting-started.md) | Step-by-step first integration |
+| [Guides](docs/guides.md) | Task-oriented recipes |
+| [Concepts](docs/concepts.md) | How the library works |
+| [Platforms](docs/platforms.md) | Render modes, .NET MAUI, NativeAOT |
+| [API reference](docs/api-reference.md) | Every public type and member |
+| [FAQ](docs/faq.md) | Troubleshooting and limitations |
 
-## Key Public Types
+## Requirements
 
-| Type | Kind | Package | Summary |
-| :--- | :--- | :--- | :--- |
-| `IQueryCodec<T>` | `interface` | `Klyroo.Query.Core` | Converts a value to and from the text of a URL query parameter. The same codecs serve the components (URL-synced state) and an API server that parses the URLs they produce, which is why they live in this Blazor-free package. The type of the value. |
-| `QueryCodecs` | `class` | `Klyroo.Query.Core` | The built-in `IQueryCodec{T}`s. Numbers and dates use the invariant culture, so a URL means the same thing on every machine. A codec never throws on input: text that is not a value makes `TryParse` return false. |
-| `QueryRange<T>` | `record` | `Klyroo.Query.Core` | A range of values with either end optional, as `Range{T}` reads and writes it. The lower end, or null for no lower bound. The upper end, or null for no upper bound. |
-| `InMemoryDataList` | `class` | `Klyroo.Query.Core` | Runs a `DataListRequest` against an in-memory list: search, filter tree, stable multi-key sort, offset or cursor paging, total count and facets. The predicate is built as an expression (see the internal `FilterExpressions`) and compiled, so the IQueryable applier can reuse the same definition of every operator. |
-| `DataListJsonContext` | `class` | `Klyroo.Query.Core` | Public API type |
-| `DataListPaging` | `record` | `Klyroo.Query.Core` | Public API type |
-| `Offset` | `record` | `Klyroo.Query.Core` | Skip a number of rows, then take a page. Rows to skip. Page size. |
-| `Cursor` | `record` | `Klyroo.Query.Core` | Keyset paging: the page after an opaque cursor. The cursor of the previous page (`NextCursor`), or `null` for the first page. Page size. Also compute `TotalCount`. |
-| `None` | `record` | `Klyroo.Query.Core` | No paging: the whole result. |
-| `DataListSort` | `record` | `Klyroo.Query.Core` | One sort rule. The key of a sortable field. Sort from the largest to the smallest. Nulls always sort last. |
-| `DataListSearch` | `record` | `Klyroo.Query.Core` | The search box: a substring searched, ignoring case, in every search field of the schema. The text; blank matches everything. |
-| `DataListFacetRequest` | `record` | `Klyroo.Query.Core` | Asks for the option counts of one filter. The key of a field with an option or boolean filter. Whether the facet's own filter applies. Maximum options returned; `null` for all. Options to skip (for loading more). Keeps only the options whose value contains this text, ignoring case. Also count the rows where the field is empty. Counts only these values (as text, the way a rule carries them), whatever `MaxFacetBuckets` says: a remote option filter asks for the values of the pages it has loaded. A value that no row has is not in the result (a reader takes it as 0). `null` or empty counts every value. |
-| `DataListRequest` | `record` | `Klyroo.Query.Core` | What a data list asks a provider for: a page of rows under a sort, a filter tree and a search, plus facet counts. |
-| `DataListFacetOption` | `record` | `Klyroo.Query.Core` | One option of a facet and the number of rows that have it. The value as text: invariant culture, `true`/`false`, enum name, ISO dates. The row count. |
-| `DataListFacetResult` | `record` | `Klyroo.Query.Core` | The counts of one facet. |
-| `DataListResult<T>` | `record` | `Klyroo.Query.Core` | A page of rows and what goes with it. The row type. The rows of the page. Rows matching the filter and search across all pages; `null` when not computed. The cursor of the next page, or `null` after the last one (cursor paging only). The requested facet counts. |
-| `DataListState` | `record` | `Klyroo.Query.Core` | The state of a data list as the user left it: search, filters, sort, page, page size, layout and, for cursor paging, the cursor. Immutable. `DataListStateQuery` converts it to and from URL query keys. |
-| `FilterOperator` | `enum` | `Klyroo.Query.Core` | Public API type |
+- .NET 10 SDK. All three packages target `net10.0`.
+- `Klyroo.Query.Core` has no platform restriction. It is marked `IsAotCompatible` and `IsTrimmable`, and a console app using the in-memory executor, the URL codecs and the JSON context was published and run with NativeAOT on linux-x64.
+- `Klyroo.Query` works in Blazor Static SSR, Interactive Server, WebAssembly and Auto. Static SSR cannot navigate, so writes are ignored there and links (`HrefWith`) carry the state instead. It declares `browser`, `ios`, `android`, `maccatalyst` and `windows` as supported platforms for .NET MAUI Blazor Hybrid; this repository does not build or test a MAUI app.
+- `Klyroo.Query.EntityFrameworkCore` depends on `Microsoft.EntityFrameworkCore` 10.0.15 or later. The tests of this repository run the `IQueryable` applier on SQLite.
 
-## Building & Testing
+## Klyroo ecosystem
 
-```bash
-dotnet build
-dotnet test
-dotnet pack -c Release
-```
+Klyroo is a family of independent .NET libraries that compose. Each one has its own repository, versions and releases.
+
+| Library | Description |
+| :--- | :--- |
+| [Klyroo.UI](https://github.com/klyroo/klyroo-ui) | Accessible Blazor and .NET MAUI Hybrid components styled with Tailwind CSS v4 |
+| [**Klyroo.Query**](https://github.com/klyroo/klyroo-query) | Typed query model, URL codecs and IQueryable / EF Core execution |
+| [Klyroo.Table](https://github.com/klyroo/klyroo-table) | Data lists and trees built on Klyroo.Query |
+| [Klyroo.Form](https://github.com/klyroo/klyroo-form) | Schema-driven forms, validation and wizards |
+| [Klyroo.Dashboard](https://github.com/klyroo/klyroo-dashboard) | Analytical dashboards with filters, comparisons and KPI blocks |
+| [Klyroo.Display](https://github.com/klyroo/klyroo-display) | Read-only display blocks, media players and file preview |
+| [Klyroo.Spreadsheet](https://github.com/klyroo/klyroo-spreadsheet) | CSV and TSV import with column mapping and validation |
+| [Klyroo.Agent](https://github.com/klyroo/klyroo-agent) | Bridge that lets AI agents read and act on a Blazor UI |
+| [Klyroo.Stack](https://github.com/klyroo/klyroo-stack) | Meta-package, MCP server and `dotnet new` templates |
 
 ## Contributing
 
-Issues and pull requests are welcome. Read [CONTRIBUTING.md](./CONTRIBUTING.md) for the workflow (Conventional
-Commits, tests, documentation), follow the [Code of Conduct](./CODE_OF_CONDUCT.md), and report vulnerabilities
-privately as described in [SECURITY.md](./SECURITY.md).
-
-## Migrating from Lux
-
-This library was previously named `lux-query`. [MIGRATION.md](./MIGRATION.md) lists every renamed package, namespace,
-component, CSS token and build setting.
+Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request, and follow the
+[code of conduct](CODE_OF_CONDUCT.md). Report security issues privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
-MIT — see [LICENSE](./LICENSE). Part of the **[Klyroo](../klyroo-stack/README.md)** ecosystem.
+[MIT](LICENSE)
