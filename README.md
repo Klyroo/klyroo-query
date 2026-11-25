@@ -1,6 +1,6 @@
 # Klyroo.Query
 
-A typed query model for lists of data: search, filter, sort, page and facet requests, their URL form, and their execution over in-memory collections and Entity Framework Core, for .NET developers who build data lists in Blazor, .NET MAUI Blazor Hybrid or an API.
+A typed query model for data lists in .NET. It describes search, filter, sort, paging and facet requests, gives them a URL form, and runs them over in-memory collections or Entity Framework Core, in Blazor, .NET MAUI Blazor Hybrid or an API.
 
 [![CI](https://github.com/klyroo/klyroo-query/actions/workflows/ci.yml/badge.svg)](https://github.com/klyroo/klyroo-query/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/vpre/Klyroo.Query.svg)](https://www.nuget.org/packages/Klyroo.Query)
@@ -54,6 +54,15 @@ Headless first. This runs in a console app, a worker or an API, with only `Klyro
 ```csharp
 using Klyroo.Query;
 
+Customer[] customers =
+[
+    new(1, "Alice Martin", "alice@example.com", CustomerStatus.Active, 34),
+    new(2, "Bruno Costa", "bruno@example.com", CustomerStatus.Inactive, 51),
+    new(3, "Dana Lee", "dana@example.com", CustomerStatus.Active, 28),
+    new(4, "Clara Diaz", "clara@example.com", CustomerStatus.Active, 42),
+    new(5, "Erik Holm", "erik@example.com", CustomerStatus.Active, 39),
+];
+
 var schema = DataListSchema.For<Customer>(s => s
     .RowKey(c => c.Id)
     .Search(c => c.Name, c => c.Email)
@@ -62,17 +71,31 @@ var schema = DataListSchema.For<Customer>(s => s
     .Field(c => c.Status, f => f.Filter(DataListFilter.Option()))
     .DefaultSort(c => c.Name));
 
+// Active customers whose name or email contains "ar", oldest first, 25 per page.
 var request = new DataListRequest(
     new DataListPaging.Offset(Skip: 0, Take: 25),
     [new DataListSort("age", Descending: true)],
     DataListFilterGroup.And(new FilterRule("status", FilterOperator.Is, new FilterValue.Text("Active"))),
-    new DataListSearch("a"));
+    new DataListSearch("ar"));
 
 DataListResult<Customer> page = schema.ExecuteInMemory(customers, request);
-// page.TotalCount == 2, page.Items[0].Name == "Alice Martin"
+
+Console.WriteLine($"{page.TotalCount} customers");
+foreach (var customer in page.Items)
+    Console.WriteLine($"{customer.Name}, {customer.Age}");
+
+public enum CustomerStatus { Active, Inactive }
+
+public sealed record Customer(int Id, string Name, string Email, CustomerStatus Status, int Age);
 ```
 
-`customers` is any `IReadOnlyList<Customer>`, where `Customer` is a record with `Id`, `Name`, `Email`, `Status` (an enum) and `Age`.
+It prints:
+
+```text
+2 customers
+Clara Diaz, 42
+Alice Martin, 34
+```
 
 Then Blazor. This component binds the `q` key of the URL to a search box. A link to `/customers?q=dan`, the Back button and the address bar all change what it shows, and an empty search leaves no key in the URL. It needs an interactive render mode.
 

@@ -36,6 +36,8 @@ All three packages target `net10.0`. `Klyroo.Query` declares `browser`, `ios`, `
 Register the service in `MauiProgram.cs` with the same call as in a web app, on the `IServiceCollection` of the builder:
 
 ```csharp
+using Klyroo.Query;
+
 builder.Services.AddKlyrooQuery();
 ```
 
