@@ -1,4 +1,4 @@
-# Getting Started with Lux.Query
+# Getting Started with Klyroo.Query
 
 Strongly typed, 100% NativeAOT query engine: composable filter AST (DataListSchema, DataListRequest, DataListFilterGroup), reversible URL query codecs, InMemory & IQueryable evaluators, Entity Framework Core async SQL executor (EfAsyncQueryExecutor), and reactive QueryState for Blazor and .NET MAUI Hybrid.
 
@@ -6,22 +6,22 @@ Strongly typed, 100% NativeAOT query engine: composable filter AST (DataListSche
 
 | Use Case | Package to Install |
 | :--- | :--- |
-| Headless C#, Minimal APIs, Workers, CLI, or native C# .NET MAUI ViewModels | `Lux.Query.Core` |
-| Blazor Web App (Server, WebAssembly, Auto, Static SSR) or `.NET MAUI Blazor Hybrid` | `Lux.Query` |
-| Entity Framework Core async SQL query execution | `Lux.Query.EntityFrameworkCore` |
+| Headless C#, Minimal APIs, Workers, CLI, or native C# .NET MAUI ViewModels | `Klyroo.Query.Core` |
+| Blazor Web App (Server, WebAssembly, Auto, Static SSR) or `.NET MAUI Blazor Hybrid` | `Klyroo.Query` |
+| Entity Framework Core async SQL query execution | `Klyroo.Query.EntityFrameworkCore` |
 
 ```bash
-dotnet add package Lux.Query.Core
-dotnet add package Lux.Query
-dotnet add package Lux.Query.EntityFrameworkCore   # Entity Framework Core async SQL executor
+dotnet add package Klyroo.Query.Core
+dotnet add package Klyroo.Query
+dotnet add package Klyroo.Query.EntityFrameworkCore   # Entity Framework Core async SQL executor
 ```
 
 ## 2. Register Services
 
-Call `builder.Services.AddLuxQuery();` in `Program.cs` (both Server and Client projects when using Blazor Interactive Auto) or `MauiProgram.cs` (after `AddMauiBlazorWebView()`):
+Call `builder.Services.AddKlyrooQuery();` in `Program.cs` (both Server and Client projects when using Blazor Interactive Auto) or `MauiProgram.cs` (after `AddMauiBlazorWebView()`):
 
 ```csharp
-builder.Services.AddLuxQuery();
+builder.Services.AddKlyrooQuery();
 ```
 
 ## 3. Add Namespace Imports
@@ -29,17 +29,17 @@ builder.Services.AddLuxQuery();
 In `_Imports.razor`:
 
 ```razor
-@using Lux.UI
-@using Lux.Query
-@using Lux.Query
+@using Klyroo.UI
+@using Klyroo.Query
+@using Klyroo.Query
 ```
 
 ## 4. First Example
 
-### Headless C# (`Lux.Query.Core`)
+### Headless C# (`Klyroo.Query.Core`)
 
 ```csharp
-using Lux.Query;
+using Klyroo.Query;
 
 var schema = DataListSchema.For<Product>(s => s
     .RowKey(p => p.Id)
@@ -55,7 +55,7 @@ var request = new DataListRequest(
 var result = schema.ExecuteInMemory(products, request);
 ```
 
-### Blazor / MAUI Hybrid (`Lux.Query`)
+### Blazor / MAUI Hybrid (`Klyroo.Query`)
 
 ```razor
 @inject QueryState Query

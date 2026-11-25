@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Klyroo.Query.Core/Klyroo.Query.Core.csproj" />
+    <Project Path="src/Klyroo.Query/Klyroo.Query.csproj" />
+    <Project Path="src/Klyroo.Query.EntityFrameworkCore/Klyroo.Query.EntityFrameworkCore.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Klyroo.Query.Tests/Klyroo.Query.Tests.csproj" />
+  </Folder>
+  <Folder Name="/examples/">
+    <Project Path="examples/AotQueryExample/AotQueryExample.csproj" />
+  </Folder>
+</Solution>

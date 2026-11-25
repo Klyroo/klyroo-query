@@ -1,1 +1,1 @@
-# LuxStack Query Starter Template
+# Klyroo Query Starter Template

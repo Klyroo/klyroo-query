@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>Klyroo.Query</RootNamespace>
+    <PackageId>Klyroo.Query</PackageId>
+    <Description>Klyroo Query for Blazor Web &amp; .NET MAUI Hybrid: URL QueryState synchronization built on Klyroo.Query.Core.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IsTrimmable>true</IsTrimmable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+    <ProjectReference Include="..\Klyroo.Query.Core\Klyroo.Query.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Klyroo.Query.Tests" />
+    <InternalsVisibleTo Include="Klyroo.Table.Core" />
+    <InternalsVisibleTo Include="Klyroo.Table" />
+    <InternalsVisibleTo Include="Klyroo.Table.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+    <SupportedPlatform Include="ios" />
+    <SupportedPlatform Include="android" />
+    <SupportedPlatform Include="maccatalyst" />
+    <SupportedPlatform Include="windows" />
+  </ItemGroup>
+</Project>

@@ -1,16 +1,16 @@
-# API Reference — Lux.Query
+# API Reference — Klyroo.Query
 
-Complete public API reference extracted directly from the source code of `Lux.Query.Core` and `Lux.Query`.
+Complete public API reference extracted directly from the source code of `Klyroo.Query.Core` and `Klyroo.Query`.
 
 ## C# Types, Controllers, Models & Enums
 
 ### `interface IQueryCodec<T>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Codecs/IQueryCodec.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Codecs/IQueryCodec.cs`
 
 Converts a value to and from the text of a URL query parameter. The same codecs serve the components (URL-synced state) and an API server that parses the URLs they produce, which is why they live in this Blazor-free package. The type of the value.
 
 ### `class QueryCodecs`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Codecs/QueryCodecs.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Codecs/QueryCodecs.cs`
 
 The built-in `IQueryCodec{T}`s. Numbers and dates use the invariant culture, so a URL means the same thing on every machine. A codec never throws on input: text that is not a value makes `TryParse` return false.
 
@@ -50,12 +50,12 @@ The built-in `IQueryCodec{T}`s. Numbers and dates use the invariant culture, so 
 | `Format(QueryRange<T> value)` | `string?` | — |
 
 ### `record QueryRange<T>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Codecs/QueryCodecs.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Codecs/QueryCodecs.cs`
 
 A range of values with either end optional, as `Range{T}` reads and writes it. The lower end, or null for no lower bound. The upper end, or null for no upper bound.
 
 ### `class InMemoryDataList`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/InMemory/InMemoryDataList.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/InMemory/InMemoryDataList.cs`
 
 Runs a `DataListRequest` against an in-memory list: search, filter tree, stable multi-key sort, offset or cursor paging, total count and facets. The predicate is built as an expression (see the internal `FilterExpressions`) and compiled, so the IQueryable applier can reuse the same definition of every operator.
 
@@ -66,13 +66,13 @@ Runs a `DataListRequest` against an in-memory list: search, filter tree, stable 
 | `Create(DataListFacetRequest facet, IEnumerable<KeyValuePair<string, int>> counts, int missing, int maxBuckets)` | `DataListFacetResult` | — |
 
 ### `class DataListJsonContext`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListJsonContext.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListJsonContext.cs`
 
 ### `record DataListPaging`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListRequest.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListRequest.cs`
 
 ### `record Offset`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListRequest.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListRequest.cs`
 
 Skip a number of rows, then take a page. Rows to skip. Page size.
 
@@ -82,12 +82,12 @@ Skip a number of rows, then take a page. Rows to skip. Page size.
 | `ForPage(int page, int pageSize)` | `Offset` | The offset of a 1-based page. |
 
 ### `record Cursor`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListRequest.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListRequest.cs`
 
 Keyset paging: the page after an opaque cursor. The cursor of the previous page (`NextCursor`), or `null` for the first page. Page size. Also compute `TotalCount`.
 
 ### `record None`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListRequest.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListRequest.cs`
 
 No paging: the whole result.
 
@@ -96,17 +96,17 @@ No paging: the whole result.
 | `Instance` | `None` | The shared instance. |
 
 ### `record DataListSort`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListRequest.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListRequest.cs`
 
 One sort rule. The key of a sortable field. Sort from the largest to the smallest. Nulls always sort last.
 
 ### `record DataListSearch`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListRequest.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListRequest.cs`
 
 The search box: a substring searched, ignoring case, in every search field of the schema. The text; blank matches everything.
 
 ### `record DataListFacetRequest`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListRequest.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListRequest.cs`
 
 Asks for the option counts of one filter. The key of a field with an option or boolean filter. Whether the facet's own filter applies. Maximum options returned; `null` for all. Options to skip (for loading more). Keeps only the options whose value contains this text, ignoring case. Also count the rows where the field is empty. Counts only these values (as text, the way a rule carries them), whatever `MaxFacetBuckets` says: a remote option filter asks for the values of the pages it has loaded. A value that no row has is not in the result (a reader takes it as 0). `null` or empty counts every value.
 
@@ -116,7 +116,7 @@ Asks for the option counts of one filter. The key of a field with an option or b
 | `GetHashCode()` | `int` | — |
 
 ### `record DataListRequest`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListRequest.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListRequest.cs`
 
 What a data list asks a provider for: a page of rows under a sort, a filter tree and a search, plus facet counts.
 
@@ -133,12 +133,12 @@ What a data list asks a provider for: a page of rows under a sort, a filter tree
 | `GetHashCode()` | `int` | — |
 
 ### `record DataListFacetOption`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListResult.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListResult.cs`
 
 One option of a facet and the number of rows that have it. The value as text: invariant culture, `true`/`false`, enum name, ISO dates. The row count.
 
 ### `record DataListFacetResult`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListResult.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListResult.cs`
 
 The counts of one facet.
 
@@ -153,7 +153,7 @@ The counts of one facet.
 | `GetHashCode()` | `int` | — |
 
 ### `record DataListResult<T>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListResult.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListResult.cs`
 
 A page of rows and what goes with it. The row type. The rows of the page. Rows matching the filter and search across all pages; `null` when not computed. The cursor of the next page, or `null` after the last one (cursor paging only). The requested facet counts.
 
@@ -164,7 +164,7 @@ A page of rows and what goes with it. The row type. The rows of the page. Rows m
 | `DataListProvider<T>(DataListRequest request, CancellationToken cancellationToken)` | `delegate ValueTask<DataListResult<T>>` | Loads a page of rows for a request. The same shape for an in-memory list, an EF query or an HTTP call. The row type. What to load. Cancels a stale request. |
 
 ### `record DataListState`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/DataListState.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/DataListState.cs`
 
 The state of a data list as the user left it: search, filters, sort, page, page size, layout and, for cursor paging, the cursor. Immutable. `DataListStateQuery` converts it to and from URL query keys.
 
@@ -183,7 +183,7 @@ The state of a data list as the user left it: search, filters, sort, page, page 
 | `GetHashCode()` | `int` | — |
 
 ### `enum FilterOperator`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/Enums.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/Enums.cs`
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
@@ -202,7 +202,7 @@ The state of a data list as the user left it: search, filters, sort, page, page 
 | `IsNotEmpty` | `enum member` | — |
 
 ### `enum FilterKind`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/Enums.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/Enums.cs`
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
@@ -213,7 +213,7 @@ The state of a data list as the user left it: search, filters, sort, page, page 
 | `Date` | `enum member` | — |
 
 ### `enum FilterCombinator`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/Enums.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/Enums.cs`
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
@@ -221,7 +221,7 @@ The state of a data list as the user left it: search, filters, sort, page, page 
 | `Or` | `enum member` | — |
 
 ### `enum DateGranularity`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/Enums.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/Enums.cs`
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
@@ -231,7 +231,7 @@ The state of a data list as the user left it: search, filters, sort, page, page 
 | `Second` | `enum member` | — |
 
 ### `enum DataListLayout`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/Enums.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/Enums.cs`
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
@@ -239,7 +239,7 @@ The state of a data list as the user left it: search, filters, sort, page, page 
 | `Grid` | `enum member` | — |
 
 ### `enum FacetMode`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/Enums.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/Enums.cs`
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
@@ -247,15 +247,15 @@ The state of a data list as the user left it: search, filters, sort, page, page 
 | `IncludeSelf` | `enum member` | — |
 
 ### `record DataListFilterNode`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterNodes.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterNodes.cs`
 
 ### `record FilterRule`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterNodes.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterNodes.cs`
 
 One condition on a field (or on a query-only filter, see `QueryFilter`). The filter key: the stable key of a field, or the name of a query-only filter. The comparison. The operand; `null` for `IsEmpty` and `IsNotEmpty`. Also match rows where the field is empty (null or an empty string).
 
 ### `record DataListFilterGroup`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterNodes.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterNodes.cs`
 
 A group of filter nodes combined with AND or OR. An empty group matches every row.
 
@@ -270,35 +270,35 @@ A group of filter nodes combined with AND or OR. An empty group matches every ro
 | `GetHashCode()` | `int` | — |
 
 ### `record FilterValue`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterValue.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterValue.cs`
 
 ### `record Text`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterValue.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterValue.cs`
 
 A string.
 
 ### `record Number`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterValue.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterValue.cs`
 
 A number. Always a `decimal` so that every numeric field type compares exactly.
 
 ### `record Boolean`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterValue.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterValue.cs`
 
 A boolean.
 
 ### `record Date`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterValue.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterValue.cs`
 
 A calendar day. On `DateTimeOffset` and `DateTime` fields it is that day in the time zone of the request (`TimeZone`, UTC when absent), as the half-open range from its first instant to the next day's. `DateOnly` fields compare the day itself.
 
 ### `record Moment`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterValue.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterValue.cs`
 
 An instant. A date filter matches the whole hour, minute or second (the filter's `DateGranularity`) that contains it, cut in the request's time zone; against a `DateOnly` field it reduces to its local day.
 
 ### `record List`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterValue.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterValue.cs`
 
 A list of option values. Values are strings and are converted to the type of the field (enum name, number, bool, Guid, ISO date).
 
@@ -309,12 +309,12 @@ A list of option values. Values are strings and are converted to the type of the
 | `GetHashCode()` | `int` | — |
 
 ### `record Range`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Model/FilterValue.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Model/FilterValue.cs`
 
 A range with inclusive bounds, either of which may be missing. Bounds are `Number`, `Date` or `Moment`.
 
 ### `class DataListQuery<T>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Queryable/QueryableDataList.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Queryable/QueryableDataList.cs`
 
 The two queries of a request, for the caller to run: `Matching` counts the rows (`CountAsync()`) and `Page` loads the page (`ToListAsync()`). Neither runs anything: they are plain `IQueryable{T}` built from `Queryable` operators. The row type.
 
@@ -327,7 +327,7 @@ The two queries of a request, for the caller to run: `Matching` counts the rows 
 | `Deconstruct(out IQueryable<T> matching, out IQueryable<T> page)` | `void` | Splits the query into its two parts: `var (matching, page) = schema.Apply(...)`. |
 
 ### `class DataListRow<T>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Queryable/QueryableDataList.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Queryable/QueryableDataList.cs`
 
 A row of a page together with what the database computed for its cursor: the value of each sort field, in the order of the sort, and the row key. The row type.
 
@@ -338,7 +338,7 @@ A row of a page together with what the database computed for its cursor: the val
 | `Key` | `object?` | The row key, boxed. |
 
 ### `class DataListFacetBucket`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Queryable/QueryableDataList.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Queryable/QueryableDataList.cs`
 
 One option of a facet as read from the database: the value in its own type, and the number of rows that have it.
 
@@ -348,7 +348,7 @@ One option of a facet as read from the database: the value in its own type, and 
 | `Count` | `int` | The number of rows that have the value (a row counts once per distinct value, whatever the number of elements that carry it). |
 
 ### `class DataListFacetQuery<T>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Queryable/QueryableDataList.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Queryable/QueryableDataList.cs`
 
 The queries that count one facet, for the caller to run, and the code that turns their rows into a `DataListFacetResult`. The row type.
 
@@ -360,7 +360,7 @@ The queries that count one facet, for the caller to run, and the code that turns
 | `ToResult(IEnumerable<DataListFacetBucket> buckets, int? missing = null)` | `DataListFacetResult` | The facet as the in-memory executor would answer it: options as text, searched, ordered by count then value (ordinal), then cut by `Skip` and `Limit`. The rows of `Buckets`. The count of `Missing`, when it was requested. |
 
 ### `class QueryableDataList`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Queryable/QueryableDataList.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Queryable/QueryableDataList.cs`
 
 Applies a `DataListRequest` to an `IQueryable{T}` of any provider (EF Core, for one) without referencing it: the filter tree, the search, the sort and the paging become `Queryable` operators the provider translates to SQL. The caller runs the queries (`CountAsync`, `ToListAsync`), so the package needs no EF reference. The expressions are the raw flavour of the filter definitions: values travel as parameters, never as literals (an `IN` for an option list, plain `Contains` for text, no `ToLower`), nothing is client-evaluated, and a null along a path (`e.Department.Name`) is SQL null. The results are those of `ExecuteInMemory{T}`, with these differences: text case and accents follow the database (the collation of the column, and how the provider translates `Contains`: SQLite's is case sensitive whatever the collation), and sorting text uses the database's order instead of the natural order. The providers must be able to compare the types of the fields: SQLite needs a value converter for `DateTimeOffset` (UTC ticks) and `decimal` (double); see the package README.
 
@@ -394,7 +394,7 @@ Applies a `DataListRequest` to an `IQueryable{T}` of any provider (EF Core, for 
 | `Value` | `TValue?` | — |
 
 ### `enum DataListNumberDisplay`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListFilter.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListFilter.cs`
 
 How a number filter editor shows its value.
 
@@ -405,7 +405,7 @@ How a number filter editor shows its value.
 | `InputAndSlider` | `enum member` | — |
 
 ### `enum DataListOptionSort`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListFilter.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListFilter.cs`
 
 How an option filter orders the options it lists.
 
@@ -415,7 +415,7 @@ How an option filter orders the options it lists.
 | `Alpha` | `enum member` | — |
 
 ### `class DataListFilter`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListFilter.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListFilter.cs`
 
 The definition of a filter: its kind, the operators it allows, its default operator and default value, and the limits an editor shows. Immutable; the `With...` methods return a changed copy. Create one with `Text`, `Option()`, `Boolean`, `Number` or `Date` and attach it to a field (`Filter`) or register it as a query-only filter (`QueryFilter`).
 
@@ -463,17 +463,17 @@ The definition of a filter: its kind, the operators it allows, its default opera
 | `WithNumberDisplay(DataListNumberDisplay display)` | `DataListFilter` | Chooses how a number editor shows its value. A slider needs `Min` and `Max`; without them the editor shows the field. The display. |
 
 ### `record DataListFilterOption`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListFilter.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListFilter.cs`
 
 One option of an option filter: the value that goes into the rule and the URL, and what the interface shows. The value as text, the way a `List` carries it (an enum name, a number, `true`). The text shown to the user.
 
 ### `record DataListOptionsRequest`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListRemoteOptions.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListRemoteOptions.cs`
 
 What a `DataListOptionsProvider` is asked for: one page of options for a search. Both kinds of paging are carried: a source that pages by position reads `Skip` and `Take`, one that pages with an opaque token reads `Cursor`. The editor fills all of them. The text typed in the search field of the editor, trimmed. Empty when nothing is typed: list the options unfiltered. How many options the earlier pages of this search returned (0 for the first page). The number of options wanted. The `NextCursor` of the previous page; `null` for the first page and for a source that does not use cursors.
 
 ### `record DataListOptionsPage`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListRemoteOptions.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListRemoteOptions.cs`
 
 One page of options loaded from a remote source. The options of this page, in the order to list them. A value that an earlier page of the same search already listed is skipped. Whether another page exists. A non-null `NextCursor` also means there is one. The cursor that asks for the page after this one; `null` when the source pages by `Skip` and `Take` or this is the last page.
 
@@ -483,7 +483,7 @@ One page of options loaded from a remote source. The options of this page, in th
 | `DataListOptionsResolver(IReadOnlyList<string> values, CancellationToken cancellationToken)` | `delegate ValueTask<IReadOnlyList<DataListFilterOption>>` | Returns the options of values that no loaded page holds (a value restored from the address, whose page was never loaded), so that a tag and an editor can show their labels. Values it cannot find may be left out: they show as they are. The values to label. Cancelled when the list goes away. |
 
 ### `class DataListRemoteOptions`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListRemoteOptions.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListRemoteOptions.cs`
 
 The remote source of the options of an option filter. See `WithRemoteOptions`.
 
@@ -495,7 +495,7 @@ The remote source of the options of an option filter. See `WithRemoteOptions`.
 | `MinLength` | `int` | The shortest search that is sent. |
 
 ### `class DataListSchema`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListSchema.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListSchema.cs`
 
 Describes what a data list can do with a row type: its fields, which are sortable or filterable, the search fields, the query-only filters, the defaults and the limits. Built in C# with expressions (no reflection over string paths, so it is trim-safe) through `For{T}`. The schema decides what a request may ask: `Sanitize(DataListRequest)` drops anything it does not know.
 
@@ -519,7 +519,7 @@ Describes what a data list can do with a row type: its fields, which are sortabl
 | `Sanitize(DataListRequest request)` | `DataListRequest` | Returns a request a provider can trust: filter rules with an unknown key, a disallowed operator or a value of the wrong shape are dropped (empty nested groups with them), sort keys that are unknown, not sortable or repeated are dropped, facets that are not option or boolean field filters are dropped, the search is dropped when the schema has no search field, a page size is clamped to 1..`MaxPageSize` (zero or less means `DefaultPageSize`), a negative skip becomes 0 and a facet limit is clamped to 1..1000. Hostile input is bounded: rules without a key and null nodes are dropped, a list keeps at most `MaxListValues` distinct non-null values, a request keeps at most `MaxFilterRules` rules and groups nest at most `MaxFilterDepth` deep. A time zone id the server does not know is cleared (UTC). |
 
 ### `class DataListSchema<T>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListSchema.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListSchema.cs`
 
 The schema of a row type : a `DataListSchema` that can also read a row's key and label and run requests in memory. The row type.
 
@@ -530,7 +530,7 @@ The schema of a row type : a `DataListSchema` that can also read a row's key and
 | `GetRowLabel(T item)` | `string?` | The label that names a row for accessibility ("Select Alice"), or `null`. |
 
 ### `class DataListSchemaBuilder<T>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListSchemaBuilder.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListSchemaBuilder.cs`
 
 The fluent description of a `DataListSchema{T}`, passed to `For{T}`: DataListSchema.For&lt;Employee&gt;(s =&gt; s .RowKey(e =&gt; e.Id).RowLabel(e =&gt; e.Name) .Search(e =&gt; e.Name, e =&gt; e.Email) .Field(e =&gt; e.Age, f =&gt; f.Sortable().Filter(DataListFilter.Number(min: 0, step: 1))) .Field(e =&gt; e.Department.Name, f =&gt; f.Filter(DataListFilter.Option())) .QueryFilter("archived", DataListFilter.Boolean(false)) .DefaultSort(e =&gt; e.Name) .MaxPageSize(500)); The row type.
 
@@ -562,7 +562,7 @@ The fluent description of a `DataListSchema{T}`, passed to `For{T}`: DataListSch
 | `ResolveKey()` | `string` | — |
 
 ### `class DataListFieldBuilder<T, TProp>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListSchemaBuilder.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListSchemaBuilder.cs`
 
 The options of one field, passed to `Field{TProp}`. The row type. The type of the field.
 
@@ -574,7 +574,7 @@ The options of one field, passed to `Field{TProp}`. The row type. The type of th
 | `Filter(DataListFilter filter)` | `DataListFieldBuilder<T, TProp>` | Gives the field a filter. The filter kind must suit the type of the field (text on a string, number on a numeric type, and so on). |
 
 ### `class DataListCollectionFieldBuilder<T, TProp>`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/Schema/DataListSchemaBuilder.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/Schema/DataListSchemaBuilder.cs`
 
 The options of a collection field, passed to `Collection{TElem, TProp}`. There is no `Sortable`: a collection has no single value to sort by. The row type. The type of the value read from an element.
 
@@ -585,7 +585,7 @@ The options of a collection field, passed to `Collection{TElem, TProp}`. There i
 | `Filter(DataListFilter filter)` | `DataListCollectionFieldBuilder<T, TProp>` | Gives the field a filter; the kind must suit the element value type. |
 
 ### `class DataListStateQuery`
-*Package*: `Lux.Query.Core` · *Source*: `src/Lux.Query.Core/State/DataListStateQuery.cs`
+*Package*: `Klyroo.Query.Core` · *Source*: `src/Klyroo.Query.Core/State/DataListStateQuery.cs`
 
 Converts a `DataListState` to and from URL query keys, as plain functions (no Blazor, no `NavigationManager`). Keys, under an optional prefix joined with a dot (`users.q`): `q`the search text `p`the 1-based page, at least 1 and at most `MaxPage` `ps`the page size, from 1 to the schema's maximum `s`the sort, `name|-age` (a leading `-` is descending); present and empty means "no sort" `f.&lt;key&gt;`a filter rule with the default operator of its kind `f.&lt;key&gt;.&lt;op&gt;`a filter rule with another operator (`contains is isAnyOf isNot gt gte lt lte between before after isEmpty isNotEmpty`) `c`the cursor `l``table` or `grid` A filter value is a comma-separated list; `,` `~` and `%` in a value are escaped as `%2C` `%7E` `%25`; a bare `~` token means "include empty rows"; a range is `from..to`. Values equal to the schema's `DefaultState` are omitted. A default filter rule that the user removed is written as its key with an empty value. The state keeps one rule per key; with two, the default rule of that key is not restored. A filter key that is repeated (`f.status=Paid&amp;f.status=Draft`, what a form with a checkbox per option sends) is read as one value: an option filter takes all of them, another kind keeps the first one that is not blank, plus a repeat that is exactly `~` (include empty rows); the address the app writes is always one comma list. A range may also be written as two keys, `f.&lt;key&gt;.from` and `f.&lt;key&gt;.to` (what a GET form can send): they read as `f.&lt;key&gt;.between`, and a state is always written back with the latter. Operators are matched ignoring case. A filter key may contain dots: the whole text after `f.` is tried as a key first, then the part before the last dot as a key and the part after as an operator.
 
@@ -596,24 +596,24 @@ Converts a `DataListState` to and from URL query keys, as plain functions (no Bl
 | `FromQuery(IEnumerable<KeyValuePair<string, string?>> query, DataListSchema schema, string? prefix, string? timeZone)` | `DataListState` | `FromQuery(IEnumerable{KeyValuePair{string, string?}}, DataListSchema, string?)` for a request that has a time zone: a date-time in a filter value without an offset (`2026-11-05T14:00`, what the `datetime-local` field of a static form posts) is the wall clock of that zone, not UTC. A date (`2026-11-05`) and a value with an offset do not depend on it. The decoded key and value pairs; when a key repeats, the first one counts, except that the repeats of a filter key are merged (see the remarks). Null values are ignored. The schema giving the defaults, the filter kinds and the sortable keys. The key prefix given to `ToQuery`. The IANA id of the zone of the user; null or an unknown id means UTC. |
 
 ### `class EfAsyncQueryExecutor`
-*Package*: `Lux.Query.EntityFrameworkCore` · *Source*: `src/Lux.Query.EntityFrameworkCore/EfAsyncQueryExecutor.cs`
+*Package*: `Klyroo.Query.EntityFrameworkCore` · *Source*: `src/Klyroo.Query.EntityFrameworkCore/EfAsyncQueryExecutor.cs`
 
-Asynchronous Entity Framework Core query helpers for `Lux.Query`.
+Asynchronous Entity Framework Core query helpers for `Klyroo.Query`.
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
 | `CountAsync<T>(IQueryable<T> query, CancellationToken cancellationToken = default)` | `ValueTask<int>` | — |
 | `ToListAsync<T>(IQueryable<T> query, CancellationToken cancellationToken = default)` | `ValueTask<List<T>>` | — |
 
-### `class LuxQueryServiceCollectionExtensions`
-*Package*: `Lux.Query` · *Source*: `src/Lux.Query/LuxQueryServiceCollectionExtensions.cs`
+### `class KlyrooQueryServiceCollectionExtensions`
+*Package*: `Klyroo.Query` · *Source*: `src/Klyroo.Query/KlyrooQueryServiceCollectionExtensions.cs`
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
-| `AddLuxQuery(this IServiceCollection services)` | `IServiceCollection` | — |
+| `AddKlyrooQuery(this IServiceCollection services)` | `IServiceCollection` | — |
 
 ### `class QueryGroup<TRecord>`
-*Package*: `Lux.Query` · *Source*: `src/Lux.Query/QueryState/QueryGroup.cs`
+*Package*: `Klyroo.Query` · *Source*: `src/Klyroo.Query/QueryState/QueryGroup.cs`
 
 A record whose properties are query keys, read and written together: one write is one navigation and one history entry. Each property has a codec and, like `QueryValue{T}`, is left out of the URL when it equals the matching property of the default record. Make one with `Group{TRecord}`, add its properties with `Add{TValue}`, and dispose it with the component that owns it (which also releases its prefix). An immutable record; its properties are changed with `with` expressions.
 
@@ -630,7 +630,7 @@ A record whose properties are query keys, read and written together: one write i
 | `Dispose()` | `void` | Stops following the URL and releases the prefix. |
 
 ### `enum QueryHistory`
-*Package*: `Lux.Query` · *Source*: `src/Lux.Query/QueryState/QueryState.cs`
+*Package*: `Klyroo.Query` · *Source*: `src/Klyroo.Query/QueryState/QueryState.cs`
 
 Whether a change of the URL adds a history entry (the Back button undoes it) or replaces the current one.
 
@@ -640,9 +640,9 @@ Whether a change of the URL adds a history entry (the Back button undoes it) or 
 | `Replace` | `enum member` | — |
 
 ### `class QueryState`
-*Package*: `Lux.Query` · *Source*: `src/Lux.Query/QueryState/QueryState.cs`
+*Package*: `Klyroo.Query` · *Source*: `src/Klyroo.Query/QueryState/QueryState.cs`
 
-The query string of the current URL as state: read it, change it, follow it when it changes. The URL is the single source of truth, so a link, the Back button and a URL typed in the address bar all change what the components bound to it show, and a page can be shared with its state. One instance per circuit or per browser tab (it is scoped), registered by `AddLuxQuery`. Writes made synchronously in one event handler, before it first yields to the renderer (an `await` that does not complete at once), merge and become a single navigation started right after; a write made after that point is another batch. If any write of a batch asks for `Push` the whole batch pushes. A value equal to what the URL already holds writes nothing. Parameters this service never wrote (`utm_source`, a parameter of another component) stay in the URL as they were. A handler that writes and then navigates to another page (`Query.Set(...); Navigation.NavigateTo("/details/5")`) loses the write: the navigation wins. Prerendering and static rendering. No navigation can happen there, and a navigation manager that is configured not to throw (`BlazorDisableThrowNavigationException`) turns the attempt into a real HTTP redirect. So a write is never sent to the navigation manager unless the renderer is known to be interactive: `Bind{T}` and `Group{TRecord}` take the `RendererInfo` of the component for this, and a write from a non-interactive renderer changes nothing and returns false. A page offers its changes as links instead (`HrefWith(IEnumerable{KeyValuePair{string, string?}})`). The raw `Set` and `SetMany` need the same knowledge, from `UseRenderer`; without it they throw `InvalidOperationException` on the server (in WebAssembly the renderer is always interactive). A navigation of this service that never comes back (a `NavigationLock` cancelled it) is rolled back after a few seconds to what the URL really holds. A key matches a prefix when it equals it or starts with the prefix and a dot (`f` matches `f.name`); the empty prefix matches every key.
+The query string of the current URL as state: read it, change it, follow it when it changes. The URL is the single source of truth, so a link, the Back button and a URL typed in the address bar all change what the components bound to it show, and a page can be shared with its state. One instance per circuit or per browser tab (it is scoped), registered by `AddKlyrooQuery`. Writes made synchronously in one event handler, before it first yields to the renderer (an `await` that does not complete at once), merge and become a single navigation started right after; a write made after that point is another batch. If any write of a batch asks for `Push` the whole batch pushes. A value equal to what the URL already holds writes nothing. Parameters this service never wrote (`utm_source`, a parameter of another component) stay in the URL as they were. A handler that writes and then navigates to another page (`Query.Set(...); Navigation.NavigateTo("/details/5")`) loses the write: the navigation wins. Prerendering and static rendering. No navigation can happen there, and a navigation manager that is configured not to throw (`BlazorDisableThrowNavigationException`) turns the attempt into a real HTTP redirect. So a write is never sent to the navigation manager unless the renderer is known to be interactive: `Bind{T}` and `Group{TRecord}` take the `RendererInfo` of the component for this, and a write from a non-interactive renderer changes nothing and returns false. A page offers its changes as links instead (`HrefWith(IEnumerable{KeyValuePair{string, string?}})`). The raw `Set` and `SetMany` need the same knowledge, from `UseRenderer`; without it they throw `InvalidOperationException` on the server (in WebAssembly the renderer is always interactive). A navigation of this service that never comes back (a `NavigationLock` cancelled it) is rolled back after a few seconds to what the URL really holds. A key matches a prefix when it equals it or starts with the prefix and a dot (`f` matches `f.name`); the empty prefix matches every key.
 
 | Member | Type | Description |
 | :--- | :--- | :--- |
@@ -664,7 +664,7 @@ The query string of the current URL as state: read it, change it, follow it when
 | `Dispose()` | `void` | — |
 
 ### `class QueryClaim`
-*Package*: `Lux.Query` · *Source*: `src/Lux.Query/QueryState/QueryState.cs`
+*Package*: `Klyroo.Query` · *Source*: `src/Klyroo.Query/QueryState/QueryState.cs`
 
 A claim on a prefix of the query keys, or on the keys of a group. Dispose it to release them.
 
@@ -676,7 +676,7 @@ A claim on a prefix of the query keys, or on the keys of a group. Dispose it to 
 | `Dispose()` | `void` | Releases the claim. |
 
 ### `class QueryValue<T>`
-*Package*: `Lux.Query` · *Source*: `src/Lux.Query/QueryState/QueryValue.cs`
+*Package*: `Klyroo.Query` · *Source*: `src/Klyroo.Query/QueryState/QueryValue.cs`
 
 One query key as a typed value. A key that is absent, or whose text the codec cannot read, gives the default; a value equal to the default is written as no key at all, so the URL of an untouched page stays clean. Make one with `Bind{T}`, and dispose it with the component that owns it. The type of the value.
 
