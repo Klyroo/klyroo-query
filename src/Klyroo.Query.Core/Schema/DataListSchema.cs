@@ -121,13 +121,16 @@ public abstract class DataListSchema
     }
 
     /// <summary>
-    /// Returns a request a provider can trust: filter rules with an unknown key, a disallowed operator or a value of the wrong shape are dropped (empty
+    /// Returns a request a provider can trust: what the schema does not allow is dropped, and sizes and counts are bounded.
+    /// </summary>
+    /// <remarks>
+    /// Filter rules with an unknown key, a disallowed operator or a value of the wrong shape are dropped (empty
     /// nested groups with them), sort keys that are unknown, not sortable or repeated are dropped, facets that are not option or boolean field
     /// filters are dropped, the search is dropped when the schema has no search field, a page size is clamped to 1..<see cref="MaxPageSize"/> (zero or
     /// less means <see cref="DefaultPageSize"/>), a negative skip becomes 0 and a facet limit is clamped to 1..1000. Hostile input is bounded: rules without
     /// a key and null nodes are dropped, a list keeps at most <see cref="MaxListValues"/> distinct non-null values, a request keeps at most
     /// <see cref="MaxFilterRules"/> rules and groups nest at most <see cref="MaxFilterDepth"/> deep. A time zone id the server does not know is cleared (UTC).
-    /// </summary>
+    /// </remarks>
     public DataListRequest Sanitize(DataListRequest request)
     {
         ArgumentNullException.ThrowIfNull(request);

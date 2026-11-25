@@ -2,8 +2,8 @@ using System.Linq.Expressions;
 
 namespace Klyroo.Query;
 
-/// <summary>
-/// The fluent description of a <see cref="DataListSchema{T}"/>, passed to <see cref="DataListSchema.For{T}"/>:
+/// <summary>The fluent description of a <see cref="DataListSchema{T}"/>, passed to <see cref="DataListSchema.For{T}"/>.</summary>
+/// <remarks>
 /// <code>
 /// DataListSchema.For&lt;Employee&gt;(s =&gt; s
 ///     .RowKey(e =&gt; e.Id).RowLabel(e =&gt; e.Name)
@@ -14,7 +14,7 @@ namespace Klyroo.Query;
 ///     .DefaultSort(e =&gt; e.Name)
 ///     .MaxPageSize(500));
 /// </code>
-/// </summary>
+/// </remarks>
 /// <typeparam name="T">The row type.</typeparam>
 public sealed class DataListSchemaBuilder<T>
 {
@@ -75,11 +75,13 @@ public sealed class DataListSchemaBuilder<T>
 
     /// <summary>
     /// Registers a field that reads one value from each element of a collection of the row:
-    /// <c>.Collection(e =&gt; e.Tags, t =&gt; t.Name, f =&gt; f.Filter(DataListFilter.Option()))</c>. The key joins both paths in camelCase
-    /// (<c>tags.name</c>). A row matches a rule when at least one element does; <c>isNot</c> is the negation of <c>is</c>/<c>isAnyOf</c> (no element is any
+    /// <c>.Collection(e =&gt; e.Tags, t =&gt; t.Name, f =&gt; f.Filter(DataListFilter.Option()))</c>. The key joins both paths in camelCase (<c>tags.name</c>).
+    /// </summary>
+    /// <remarks>
+    /// A row matches a rule when at least one element does; <c>isNot</c> is the negation of <c>is</c>/<c>isAnyOf</c> (no element is any
     /// of the values, so a row without elements matches); <c>isEmpty</c> means no non-empty element (an empty or null collection included). The predicate
     /// becomes <c>collection.Any(x =&gt; ...)</c>. Collection fields cannot be sorted.
-    /// </summary>
+    /// </remarks>
     /// <typeparam name="TElem">The element type.</typeparam>
     /// <typeparam name="TProp">The type of the value read from an element.</typeparam>
     /// <param name="collection">The collection of the row (a property of a type that is an <see cref="IEnumerable{T}"/> of <typeparamref name="TElem"/>).</param>
@@ -310,11 +312,13 @@ public sealed class DataListFieldBuilder<T, TProp>
     }
 
     /// <summary>
-    /// The <see cref="DateTime"/> values of this field are wall-clock times in the time zone of the request (a column such as PostgreSQL <c>timestamp without time zone</c>,
-    /// or a SQL Server <c>datetime2</c> that holds local times), not UTC. The bounds of a date filter are then local wall-clock times with kind <see cref="DateTimeKind.Unspecified"/>
-    /// (a day is the local midnight to the next local midnight, an hour is the local hour) instead of UTC instants, so a provider that refuses a UTC <see cref="DateTime"/> for such a
-    /// column accepts them. Without this option a <see cref="DateTime"/> field is read as UTC. Only for <see cref="DateTime"/> fields.
+    /// Declares that the <see cref="DateTime"/> values of this field are wall-clock times in the time zone of the request, not UTC. Only for <see cref="DateTime"/> fields.
     /// </summary>
+    /// <remarks>
+    /// This suits a column such as PostgreSQL <c>timestamp without time zone</c>, or a SQL Server <c>datetime2</c> that holds local times. The bounds of a date filter are then local wall-clock times with kind <see cref="DateTimeKind.Unspecified"/>
+    /// (a day is the local midnight to the next local midnight, an hour is the local hour) instead of UTC instants, so a provider that refuses a UTC <see cref="DateTime"/> for such a
+    /// column accepts them. Without this option a <see cref="DateTime"/> field is read as UTC.
+    /// </remarks>
     public DataListFieldBuilder<T, TProp> StoresLocalTime(bool localTime = true)
     {
         _definition.StoresLocalTime = localTime;

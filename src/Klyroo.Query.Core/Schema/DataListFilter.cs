@@ -245,13 +245,16 @@ public sealed class DataListFilter
     }
 
     /// <summary>
-    /// Loads the options from a remote source instead of declaring them: the editor asks for a page when it is shown (a tag's popover that opens, a panel section that opens, the add filter menu
-    /// when the filter is picked), searches while the user types (after a pause), and loads the next page as the list scrolls. The values of a rule that the loaded pages do not contain (restored from the
+    /// Loads the options from a remote source, page by page and with a search, instead of declaring them. The editor of a UI library asks for a page when it is shown,
+    /// searches while the user types and loads the next page as the list scrolls.
+    /// </summary>
+    /// <remarks>
+    /// The values of a rule that the loaded pages do not contain (restored from the
     /// address) get their labels from <paramref name="resolveSelected"/>, asked for while the rows load. Only interactive renders load pages: a statically rendered editor lists the selected options and, when the
     /// filter has counts (<see cref="WithFacets"/>), the most counted ones (at most <see cref="OptionLimit"/>, else the page size), all labelled in one call to the resolver; a counted option the resolver does not
     /// know is left out. The counts of the options that are listed are asked for by value (<see cref="DataListFacetRequest.Values"/>), so every page has its counts whatever the number of distinct values.
     /// <see cref="OptionSort"/> does not apply: the options keep the order of the source.
-    /// </summary>
+    /// </remarks>
     /// <param name="provider">Loads one page of options for a search.</param>
     /// <param name="resolveSelected">Returns the options of values that no loaded page holds; values it leaves out show as they are.</param>
     /// <param name="pageSize">How many options to ask for per page.</param>

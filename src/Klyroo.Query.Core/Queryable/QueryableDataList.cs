@@ -117,15 +117,17 @@ public sealed class DataListFacetQuery<T>
 /// Applies a <see cref="DataListRequest"/> to an <see cref="IQueryable{T}"/> of any provider (EF Core, for one) without referencing it: the filter tree, the
 /// search, the sort and the paging become <c>Queryable</c> operators the provider translates to SQL. The caller runs the queries (<c>CountAsync</c>,
 /// <c>ToListAsync</c>), so the package needs no EF reference.
+/// </summary>
+/// <remarks>
 /// <para>
 /// The expressions are the raw flavour of the filter definitions: values travel as parameters, never as literals (an <c>IN</c> for an option list, plain
 /// <c>Contains</c> for text, no <c>ToLower</c>), nothing is client-evaluated, and a null along a path (<c>e.Department.Name</c>) is SQL null. The results are
 /// those of <see cref="InMemoryDataList.ExecuteInMemory{T}"/>, with these differences: <b>text case and accents follow the database</b> (the collation of
 /// the column, and how the provider translates <c>Contains</c>: SQLite's is case sensitive whatever the collation), and sorting text uses the database's
 /// order instead of the natural order. The providers must be able to compare the types of the fields: SQLite needs a value converter for
-/// <see cref="DateTimeOffset"/> (UTC ticks) and <see cref="decimal"/> (double); see the package README.
+/// <see cref="DateTimeOffset"/> (it cannot order or compare it without a converter, for example to UTC ticks).
 /// </para>
-/// </summary>
+/// </remarks>
 public static class QueryableDataList
 {
     /// <summary>

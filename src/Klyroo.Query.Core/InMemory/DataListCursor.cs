@@ -10,7 +10,7 @@ namespace Klyroo.Query;
 /// row of the page. The next page is every row that sorts strictly after that tuple, so it survives rows being added or removed in between.
 /// It is opaque but not signed: it carries no secret and no permission, and filters and authorization are applied again to every request, so
 /// editing a cursor can only move the position inside the caller's own result. A cursor that does not decode, or that was made for another sort,
-/// is read as "no cursor" (the first page).
+/// ends the walk: the executors return an empty page and no next cursor.
 /// </summary>
 internal static class DataListCursor
 {

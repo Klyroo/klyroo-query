@@ -27,10 +27,10 @@ internal static class TextFold
 /// <list type="bullet">
 /// <item><description><b>In memory</b> (<c>inMemory: true</c>): null guards along every path, and text <c>contains</c> and search that ignore case and accents
 /// (<c>CompareInfo.IndexOf</c> with <c>IgnoreCase | IgnoreNonSpace</c>, invariant culture).</description></item>
-/// <item><description><b>Raw</b> (<c>inMemory: false</c>), for the IQueryable applier of a later step: the expression as written, <c>string.Contains</c> without any
+/// <item><description><b>Raw</b> (<c>inMemory: false</c>), for the IQueryable applier: the expression as written, <c>string.Contains</c> without any
 /// <c>ToLower</c> (the database collation decides about case and accents), no null guards, values read through <see cref="ValueBox"/> members so that
-/// providers emit parameters, and <c>array.Contains(x)</c> for lists (an <c>IN</c> clause). Used by the IQueryable applier (<see cref="QueryableDataList"/>); proven against
-/// EF Core and SQLite in <c>Klyroo.Query.EfTests</c>, with no EF dependency in this package.</description></item>
+/// providers emit parameters, and <c>array.Contains(x)</c> for lists (an <c>IN</c> clause). Used by the IQueryable applier (<see cref="QueryableDataList"/>); tested against
+/// EF Core and SQLite by the tests of this repository, with no EF dependency in this package.</description></item>
 /// </list>
 /// Dates are half-open ranges <c>[start, next)</c> computed in the request's time zone.
 /// </summary>

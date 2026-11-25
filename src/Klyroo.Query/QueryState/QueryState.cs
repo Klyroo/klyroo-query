@@ -206,7 +206,8 @@ public sealed class QueryState : IDisposable
         }
     }
 
-    /// <inheritdoc cref="HrefWith(IEnumerable{KeyValuePair{string, string?}})"/>
+    /// <summary>The same as <see cref="HrefWith(IEnumerable{KeyValuePair{string, string?}})"/>, with the changes as (key, value) tuples: <c>HrefWith(("p", "2"), ("q", null))</c>.</summary>
+    /// <param name="changes">The keys and their new text; a null value removes its key.</param>
     public string HrefWith(params (string Key, string? Value)[] changes) =>
         HrefWith(changes.Select(c => new KeyValuePair<string, string?>(c.Key, c.Value)));
 

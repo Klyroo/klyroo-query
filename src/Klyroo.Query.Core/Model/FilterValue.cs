@@ -20,18 +20,23 @@ public abstract record FilterValue
     private protected FilterValue() { }
 
     /// <summary>A string.</summary>
+    /// <param name="Value">The text.</param>
     public sealed record Text(string Value) : FilterValue;
 
     /// <summary>A number. Always a <see cref="decimal"/> so that every numeric field type compares exactly.</summary>
+    /// <param name="Value">The number.</param>
     public sealed record Number(decimal Value) : FilterValue;
 
     /// <summary>A boolean.</summary>
+    /// <param name="Value">The flag.</param>
     public sealed record Boolean(bool Value) : FilterValue;
 
     /// <summary>A calendar day. On <see cref="DateTimeOffset"/> and <see cref="DateTime"/> fields it is that day in the time zone of the request (<see cref="DataListRequest.TimeZone"/>, UTC when absent), as the half-open range from its first instant to the next day's. <see cref="DateOnly"/> fields compare the day itself.</summary>
+    /// <param name="Value">The day.</param>
     public sealed record Date(DateOnly Value) : FilterValue;
 
     /// <summary>An instant. A date filter matches the whole hour, minute or second (the filter's <see cref="DateGranularity"/>) that contains it, cut in the request's time zone; against a <see cref="DateOnly"/> field it reduces to its local day.</summary>
+    /// <param name="Value">The instant, with its offset.</param>
     public sealed record Moment(DateTimeOffset Value) : FilterValue;
 
     /// <summary>A list of option values. Values are strings and are converted to the type of the field (enum name, number, bool, Guid, ISO date).</summary>
@@ -51,5 +56,7 @@ public abstract record FilterValue
     }
 
     /// <summary>A range with inclusive bounds, either of which may be missing. Bounds are <see cref="Number"/>, <see cref="Date"/> or <see cref="Moment"/>.</summary>
+    /// <param name="From">The lower bound, or <see langword="null"/> for none.</param>
+    /// <param name="To">The upper bound, or <see langword="null"/> for none.</param>
     public sealed record Range(FilterValue? From, FilterValue? To) : FilterValue;
 }

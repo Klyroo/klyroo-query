@@ -3,8 +3,11 @@ using System.Globalization;
 namespace Klyroo.Query;
 
 /// <summary>
-/// Converts a <see cref="DataListState"/> to and from URL query keys, as plain functions (no Blazor, no <c>NavigationManager</c>). Keys, under an
-/// optional prefix joined with a dot (<c>users.q</c>):
+/// Converts a <see cref="DataListState"/> to and from URL query keys, as plain functions (no Blazor, no <c>NavigationManager</c>), under an
+/// optional prefix joined with a dot (<c>users.q</c>). Values equal to the defaults of the schema are left out, and bad input is dropped, never thrown.
+/// </summary>
+/// <remarks>
+/// The keys:
 /// <list type="table">
 /// <item><term><c>q</c></term><description>the search text</description></item>
 /// <item><term><c>p</c></term><description>the 1-based page, at least 1 and at most <see cref="DataListState.MaxPage"/></description></item>
@@ -21,7 +24,7 @@ namespace Klyroo.Query;
 /// default rule of that key is not restored. A filter key that is repeated (<c>f.status=Paid&amp;f.status=Draft</c>, what a form with a checkbox per option sends) is read as one value: an option filter takes all of them,
 /// another kind keeps the first one that is not blank, plus a repeat that is exactly <c>~</c> (include empty rows); the address the app writes is always one comma list. A range may also be written as two keys, <c>f.&lt;key&gt;.from</c> and <c>f.&lt;key&gt;.to</c> (what a GET form can send): they read as <c>f.&lt;key&gt;.between</c>, and a state is always written back with the latter. Operators are matched ignoring case. A filter key may contain dots: the whole text after <c>f.</c> is tried
 /// as a key first, then the part before the last dot as a key and the part after as an operator.
-/// </summary>
+/// </remarks>
 public static class DataListStateQuery
 {
     /// <summary>Writes the keys of a state that differ from the defaults. Rules the schema does not accept are left out, so the result always reads back.</summary>
