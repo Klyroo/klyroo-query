@@ -184,11 +184,6 @@ The definition of a filter: its kind, the operators it allows, its default opera
 
 System.Text.Json source-generated metadata for the wire records (request, filter tree, values, facets, state), so they serialize without reflection and survive trimming. Polymorphic types carry a `type` discriminator; enums are strings; names are camelCase. `DataListResult` is generic: declare `[JsonSerializable(typeof(DataListResult<MyRow>))]` in the context of your own app, which can reuse these types.
 
-| Constructor | Description |
-| :--- | :--- |
-| `DataListJsonContext()` |  |
-| `DataListJsonContext(JsonSerializerOptions options)` |  |
-
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `Boolean` | `JsonTypeInfo<bool>` | Defines the source generated JSON serialization contract metadata for a given type. |
@@ -234,10 +229,6 @@ System.Text.Json source-generated metadata for the wire records (request, filter
 | `String` | `JsonTypeInfo<string>` | Defines the source generated JSON serialization contract metadata for a given type. |
 | `StringArray` | `JsonTypeInfo<string[]>` | Defines the source generated JSON serialization contract metadata for a given type. |
 | `Text` | `JsonTypeInfo<FilterValue.Text>` | Defines the source generated JSON serialization contract metadata for a given type. |
-
-| Method | Returns | Description |
-| :--- | :--- | :--- |
-| `GetTypeInfo(Type type)` | `JsonTypeInfo?` |  |
 
 #### `DataListQuery<T>`
 
