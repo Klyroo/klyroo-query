@@ -5,7 +5,6 @@
     <PackageId>Klyroo.Query</PackageId>
     <Description>Klyroo Query for Blazor Web &amp; .NET MAUI Hybrid: URL QueryState synchronization built on Klyroo.Query.Core.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
     <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
   <ItemGroup>
