@@ -19,8 +19,53 @@ packages:
   - Klyroo.Query
   - Klyroo.Query.EntityFrameworkCore
 
-# The primary color of the site, the name of a Tailwind palette (blue, emerald, violet...). Without it the Klyroo colors are used.
-# accent: blue
+# The home page. headline is two lines, the second in the accent color; lead is the paragraph under it. Without them: the title and the tagline.
+headline: |
+  A typed query model
+  for data lists in .NET.
+lead: >-
+  Describe a row type once. Search, filters, sort, paging and facets become plain data that serializes to JSON, runs over a list or an IQueryable, and has a URL form that survives a round trip.
+
+# The accent of the site (#rrggbb): buttons, links, marks and the second line of the headline. The text variants that pass the contrast rules in light and
+# dark mode are computed from it. Without it: the color of the library in klyroo-stack/docs-site/Klyroo.Docs.Site/libraries.yml.
+accent: "#ff4154"
+
+# The texture of the ground behind the header and the hero: blueprint-grid, dot-matrix, ruled-rows, baseline-grid, chart-ticks, halftone, cell-grid or node-dots.
+texture: dot-matrix
+
+# What the hero demonstrates. Either board: table | form (a board with feature chips and several results, authored in docs-site), or a simple hero: the code,
+# the lines the leader line starts at (focus) and one result (output: lines of text, or preview: ui-settings | display-stat | spreadsheet-rows).
+demo:
+  file: Program.cs
+  language: csharp
+  focus: 16-20
+  code: |
+    var schema = DataListSchema.For<Customer>(s => s
+        .RowKey(c => c.Id)
+        .Search(c => c.Name, c => c.Email)
+        .Field(c => c.Name, f => f.Sortable())
+        .Field(c => c.Age, f => f.Sortable().Filter(DataListFilter.Number(min: 0)))
+        .Field(c => c.Status, f => f.Filter(DataListFilter.Option()))
+        .DefaultSort(c => c.Name));
+
+    // Active customers whose name or email contains "ar", oldest first, 25 per page.
+    var request = new DataListRequest(
+        new DataListPaging.Offset(Skip: 0, Take: 25),
+        [new DataListSort("age", Descending: true)],
+        DataListFilterGroup.And(new FilterRule("status", FilterOperator.Is, new FilterValue.Text("Active"))),
+        new DataListSearch("ar"));
+
+    DataListResult<Customer> page = schema.ExecuteInMemory(customers, request);
+
+    Console.WriteLine($"{page.TotalCount} customers");
+    foreach (var customer in page.Items)
+        Console.WriteLine($"{customer.Name}, {customer.Age}");
+  result:
+    title: What it prints
+    output: |
+      2 customers
+      Clara Diaz, 42
+      Alice Martin, 34
 
 # The pages in the order of the navigation. docs/README.md comes first, as "Documentation". A page that is not listed follows, by file name.
 # An entry is a file name below docs/ without .md, or a map with page and any of: title, navTitle, description, tocDepth, indexText. A group has a group name and its pages.
