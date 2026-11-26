@@ -8,8 +8,14 @@ namespace Klyroo.Query;
 /// granularity). Day boundaries that fall in a daylight saving gap start at the first valid time after the gap, and in an overlap at the earlier instant.
 /// Hour, minute and second units are cut using the zone's offset at the instant, so a zone with a half-hour offset gets local hours.
 /// </summary>
-internal readonly record struct DateUnit(DateTimeOffset StartUtc, DateTimeOffset NextUtc, DateOnly StartDay, DateOnly? NextDay)
+internal readonly struct DateUnit(DateTimeOffset startUtc, DateTimeOffset nextUtc, DateOnly startDay, DateOnly? nextDay)
 {
+    // A plain struct, not a record struct: nothing compares, prints or deconstructs it, and a record struct would add ten members to the assembly.
+    public DateTimeOffset StartUtc { get; } = startUtc;
+    public DateTimeOffset NextUtc { get; } = nextUtc;
+    public DateOnly StartDay { get; } = startDay;
+    public DateOnly? NextDay { get; } = nextDay;
+
     public static DateUnit Of(FilterValue value, DateGranularity granularity, TimeZoneInfo zone)
     {
         switch (value)

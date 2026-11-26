@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- `Klyroo.Query.Core` is about 1.5 KB smaller: the internal `DateUnit` is a plain struct instead of a record struct, because nothing compared, printed or deconstructed it. No public API changes.
+
 - **Breaking:** `DataListSchema<T>.ReadField`, which returned a boxed `object?`, is replaced by `FormatField(item, key, format, provider)` (the text of a field, null-safe, collections joined by commas), `TryReadNumber(item, key, out decimal)` (a numeric field for totals and averages) and `CompareField(first, second, key)` (the sort order of two rows by a field). `DataListFieldInfo.HasStructuredValue` tells whether a field holds numbers, dates, times, GUIDs or booleans, and `HasStructuredValueFor(item, key)` answers for one row (a field declared `object` is decided by the type of its value).
 - **Breaking:** `DataListRow<T>.SortValues` and `Key`, and `DataListFacetBucket.Value`, are internal: only `ToResult` reads them to build the cursor and the facet, so the boxed values no longer appear in the public API. Load the rows and buckets as before and pass them to `ToResult`.
 
