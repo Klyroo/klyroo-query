@@ -4,7 +4,7 @@ namespace Klyroo.Query;
 /// The instant of a local day and time in a time zone, with one rule for the two cases a wall clock does not name one instant. The server (the day and unit bounds of <see cref="DateUnit"/>), the filter editor
 /// of the data list and the reading of a posted date-time field all use it, so they cannot disagree on a day that starts in a gap.
 /// </summary>
-internal static class LocalInstants
+public static class LocalInstants
 {
     /// <summary>
     /// The instant of <paramref name="local"/> (the wall clock in <paramref name="zone"/>; its kind is ignored). A time in the gap of a clock change (02:15 when the clocks go from 02:00 to 03:00, or the whole of

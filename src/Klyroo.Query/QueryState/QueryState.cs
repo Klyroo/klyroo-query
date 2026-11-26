@@ -102,7 +102,9 @@ public sealed class QueryState : IDisposable
     }
 
     /// <summary>Every key and value of the query whose key matches <paramref name="prefix"/> (all of them for the empty prefix), with the writes of the current handler on top: what a component that owns a prefix reads its state from.</summary>
-    internal IReadOnlyList<KeyValuePair<string, string?>> Snapshot(string prefix)
+    /// <param name="prefix">The prefix of the keys to return; the empty text returns every key.</param>
+    /// <returns>A copy of the matching pairs, in query order; a later write does not change it.</returns>
+    public IReadOnlyList<KeyValuePair<string, string?>> Snapshot(string prefix)
     {
         ArgumentNullException.ThrowIfNull(prefix);
         lock (_gate)

@@ -8,12 +8,19 @@ namespace Klyroo.Query;
 /// <c>%2C</c> <c>%7E</c> <c>%25</c>, a bare <c>~</c> token means "include empty rows", a range is <c>from..to</c> (either side may be missing),
 /// numbers use the invariant culture (a dot) and dates are ISO 8601 (<c>yyyy-MM-dd</c> for a day, the round-trip format for an instant).
 /// </summary>
-internal static class FilterRuleText
+public static class FilterRuleText
 {
+    /// <summary>The bare token that means "include empty rows" (<c>~</c>).</summary>
     public const string IncludeEmptyToken = "~";
 
+    /// <summary>The URL name of an operator: its name in camelCase (<c>notContains</c>).</summary>
+    /// <param name="op">The operator.</param>
     public static string OperatorName(FilterOperator op) => FieldAccessor.CamelCase(op.ToString());
 
+    /// <summary>Reads the URL name of an operator (case-insensitive; a number is not a name).</summary>
+    /// <param name="text">The name.</param>
+    /// <param name="op">The operator when the name is known.</param>
+    /// <returns>Whether the name is an operator.</returns>
     public static bool TryParseOperator(string text, out FilterOperator op) =>
         Enum.TryParse(text, ignoreCase: true, out op) && Enum.IsDefined(op) && !int.TryParse(text, out _);
 
@@ -121,6 +128,8 @@ internal static class FilterRuleText
             : null;
     }
 
+    /// <summary>Writes a value into the URL text of a rule: <c>,</c> <c>~</c> and <c>%</c> become <c>%2C</c> <c>%7E</c> <c>%25</c>.</summary>
+    /// <param name="value">The value.</param>
     public static string Escape(string value)
     {
         if (value.AsSpan().IndexOfAny(",~%") < 0) return value;
@@ -138,6 +147,8 @@ internal static class FilterRuleText
         return sb.ToString();
     }
 
+    /// <summary>The inverse of <see cref="Escape"/>.</summary>
+    /// <param name="value">The escaped text.</param>
     public static string Unescape(string value)
     {
         if (!value.Contains('%')) return value;

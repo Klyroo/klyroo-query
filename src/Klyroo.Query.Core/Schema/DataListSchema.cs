@@ -56,6 +56,18 @@ public abstract class DataListSchema
         return builder.Build();
     }
 
+    /// <summary>
+    /// The key a field gets when the schema does not name one: the member path of <paramref name="property"/> with each segment in camelCase
+    /// (<c>e =&gt; e.Department.Name</c> gives <c>department.name</c>). Lets a UI column and the schema agree on a key without a string.
+    /// </summary>
+    /// <param name="property">The member access expression.</param>
+    /// <returns>The key, or <see langword="null"/> when the body is not a member chain.</returns>
+    public static string? DefaultFieldKey(System.Linq.Expressions.LambdaExpression property)
+    {
+        ArgumentNullException.ThrowIfNull(property);
+        return FieldAccessor.Create(property).DefaultKey;
+    }
+
     /// <summary>The keys of every filter (fields and query-only filters), in declaration order.</summary>
     public IReadOnlyList<string> FilterKeys { get; }
 
@@ -274,6 +286,26 @@ public sealed class DataListSchema<T> : DataListSchema
     internal int CompareRowKeys(T a, T b) => RowKeyComparer.Instance.Compare(RowKeyValue(a), RowKeyValue(b));
 
     internal IReadOnlyList<DataListField<T>> Fields { get; }
+
+    private IReadOnlyList<DataListFieldInfo>? _fieldInfos;
+
+    /// <summary>The registered fields in declaration order, described for a UI (key, sortable, collection, filter). Use <see cref="ReadField"/> to read one for a row.</summary>
+    public IReadOnlyList<DataListFieldInfo> FieldInfos =>
+        _fieldInfos ??= [.. Fields.Select(f => new DataListFieldInfo(f.Key, f.Sortable, f.IsCollection, f.Filter))];
+
+    /// <summary>
+    /// The value of a field for a row, null-safe along its path (a null <c>Department</c> gives <see langword="null"/>, not an exception). The elements of
+    /// a collection field are joined by commas. Returns <see langword="null"/> for a key that is not a field of the schema.
+    /// </summary>
+    /// <param name="item">The row.</param>
+    /// <param name="key">The key of the field.</param>
+    public object? ReadField(T item, string key)
+    {
+        if (!_fields.TryGetValue(key, out var field)) return null;
+        return field.IsCollection
+            ? string.Join(", ", field.Values(item).Where(v => v is not null))
+            : field.Getter(item);
+    }
 
     internal IReadOnlyList<ValueSource> SearchSources { get; }
 

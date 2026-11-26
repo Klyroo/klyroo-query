@@ -14,9 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Klyroo.Query.Tests" />
-    <InternalsVisibleTo Include="Klyroo.Table.Core" />
-    <InternalsVisibleTo Include="Klyroo.Table" />
-    <InternalsVisibleTo Include="Klyroo.Table.Tests" />
   </ItemGroup>
   <ItemGroup>
     <SupportedPlatform Include="browser" />

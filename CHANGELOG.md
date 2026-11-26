@@ -7,7 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- `QueryState.Snapshot(prefix)`, `DataListSchema<T>.FieldInfos` (with the `DataListFieldInfo` record), `DataListSchema<T>.ReadField`, `DataListSchema.DefaultFieldKey`, and the public `FilterRuleText` and `LocalInstants` helpers: the API Klyroo.Table needs, documented, so a list component of your own can be built on the query layer.
+
 ### Changed
+
+- The packages no longer grant `InternalsVisibleTo` to Klyroo.Table, Klyroo.Table.Core or their tests: a sibling package uses only public API.
 
 - The documentation of `DataListFilter.Persist` and `WithPersist` says what reads them: a list component such as `KlyDataList` of Klyroo.Table, which keeps the value in `localStorage` in the URL form of `DataListStateQuery`. The executors and the URL codecs still ignore the flag.
 

@@ -251,6 +251,42 @@ public sealed class QueryEngineEdgeCaseTests : BunitContext
     }
 
     [Fact]
+    public void QueryState_Snapshot_lists_the_keys_of_a_prefix_with_the_pending_writes_on_top()
+    {
+        Services.AddKlyrooQuery();
+        var nav = Services.GetRequiredService<NavigationManager>();
+        nav.NavigateTo("http://localhost/deals?deals.q=abc&deals.p=2&other=1");
+        var qs = Services.GetRequiredService<QueryState>();
+        qs.UseRenderer(new RendererInfo("Server", true));
+
+        Assert.Equal(["deals.p", "deals.q"], qs.Snapshot("deals").Select(p => p.Key).Order().ToArray());
+        Assert.Equal(3, qs.Snapshot("").Count);
+
+        qs.Set("deals.q", "xyz");
+        qs.Set("deals.p", null);
+        var snapshot = qs.Snapshot("deals");
+        Assert.Equal("xyz", Assert.Single(snapshot).Value);
+        Assert.Throws<ArgumentNullException>(() => qs.Snapshot(null!));
+    }
+
+    [Fact]
+    public void Schema_describes_its_fields_for_a_UI_and_reads_a_value_null_safe()
+    {
+        var schema = DataListSchema.For<Person>(s => s
+            .Field(p => p.Name, f => f.Sortable())
+            .Field(p => p.Boss!.Name, f => f.Key("bossName")));
+        Assert.Equal(["name", "bossName"], schema.FieldInfos.Select(f => f.Key).ToArray());
+        Assert.True(schema.FieldInfos[0].Sortable);
+        Assert.Equal("ann", schema.ReadField(new Person("ann", null), "name"));
+        Assert.Null(schema.ReadField(new Person("ann", null), "bossName"));
+        Assert.Equal("bo", schema.ReadField(new Person("ann", new Person("bo", null)), "bossName"));
+        Assert.Null(schema.ReadField(new Person("ann", null), "nope"));
+        Assert.Equal("boss.name", DataListSchema.DefaultFieldKey((System.Linq.Expressions.Expression<Func<Person, string?>>)(p => p.Boss!.Name)));
+    }
+
+    private sealed record Person(string Name, Person? Boss);
+
+    [Fact]
     public async Task EfCore_Sqlite_executes_keyset_cursor_paging_multi_sort_and_complex_filters_in_SQL()
     {
         var ct = Xunit.TestContext.Current.CancellationToken;

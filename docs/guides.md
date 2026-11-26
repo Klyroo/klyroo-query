@@ -439,6 +439,26 @@ IReadOnlyDictionary<string, string> query = DataListStateQuery.ToQuery(
 // customers.q=alice, customers.p=3
 ```
 
+## Build your own list component on the query layer
+
+Goal: write a component that owns a key prefix, like `KlyDataList` of Klyroo.Table does, using only public API (the packages share no internals).
+
+```csharp
+// Every key and value of the query under the prefix, with the writes of the current handler on top.
+IReadOnlyList<KeyValuePair<string, string?>> pairs = query.Snapshot("customers");
+
+DataListState state = DataListStateQuery.FromQuery(pairs, schema, prefix: "customers");
+
+// Describe the fields to draw a header or a card without touching expressions.
+foreach (DataListFieldInfo field in schema.FieldInfos)
+{
+    if (field.IsCollection) continue;
+    object? value = schema.ReadField(row, field.Key); // null-safe along the path, collections joined by commas
+}
+```
+
+`Snapshot` returns a copy, so a later write does not change it, and the empty prefix returns every key. `DataListSchema.DefaultFieldKey(e => e.Department.Name)` gives the key a field gets when the schema does not name one (`department.name`). `FilterRuleText` writes and reads the text of one rule (`OperatorName`, `Escape`, `Unescape`, `Format`, `Parse`), and `LocalInstants.At` gives the instant of a local day and time in a zone with the same rule for clock gaps and repeated hours that the filters use.
+
 ## Bind several query keys to one record
 
 Goal: keep a search, a page and a status filter in the URL, read and written together as one record.
