@@ -167,7 +167,35 @@ public static class DataListStateQuery
     }
 
     private static string FilterKey(string? prefix, DataListFilter filter, string key, FilterOperator op) =>
-        Key(prefix, op == filter.DefaultOperator ? "f." + key : "f." + key + "." + FilterRuleText.OperatorName(op));
+        Key(prefix, FilterParameterName(key, op, filter));
+
+    /// <summary>The bare token that means "include empty rows" in the text of a filter rule (<c>~</c>).</summary>
+    public const string IncludeEmptyToken = FilterRuleText.IncludeEmptyToken;
+
+    /// <summary>
+    /// The name, without the list prefix, of the query key that carries the rule of a filter: <c>f.status</c> for the default operator of the filter, <c>f.status.isNot</c> for another one. A form that submits
+    /// a filter as GET fields uses it, so its fields are the keys <see cref="FromQuery(IEnumerable{KeyValuePair{string, string?}}, DataListSchema, string?)"/> reads.
+    /// </summary>
+    /// <param name="key">The key of the filter.</param>
+    /// <param name="op">The operator of the rule.</param>
+    /// <param name="filter">The filter, to know its default operator; <see langword="null"/> always names the operator.</param>
+    public static string FilterParameterName(string key, FilterOperator op, DataListFilter? filter = null)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        return filter is not null && op == filter.DefaultOperator ? "f." + key : "f." + key + "." + OperatorName(op);
+    }
+
+    /// <summary>The name of an operator in a query key: its name in camelCase (<c>notContains</c>).</summary>
+    /// <param name="op">The operator.</param>
+    public static string OperatorName(FilterOperator op) => FilterRuleText.OperatorName(op);
+
+    /// <summary>Writes one value into the text of a filter rule: <c>,</c> <c>~</c> and <c>%</c> become <c>%2C</c> <c>%7E</c> <c>%25</c>, so that a form field holds a value the reader takes back unchanged.</summary>
+    /// <param name="value">The value.</param>
+    public static string EscapeValue(string value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        return FilterRuleText.Escape(value);
+    }
 
     private static void WriteFilters(DataListState state, DataListSchema schema, string? prefix, Dictionary<string, string> query)
     {

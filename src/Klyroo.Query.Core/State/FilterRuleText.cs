@@ -8,7 +8,7 @@ namespace Klyroo.Query;
 /// <c>%2C</c> <c>%7E</c> <c>%25</c>, a bare <c>~</c> token means "include empty rows", a range is <c>from..to</c> (either side may be missing),
 /// numbers use the invariant culture (a dot) and dates are ISO 8601 (<c>yyyy-MM-dd</c> for a day, the round-trip format for an instant).
 /// </summary>
-public static class FilterRuleText
+internal static class FilterRuleText
 {
     /// <summary>The bare token that means "include empty rows" (<c>~</c>).</summary>
     public const string IncludeEmptyToken = "~";

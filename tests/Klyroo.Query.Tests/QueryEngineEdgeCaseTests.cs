@@ -284,6 +284,18 @@ public sealed class QueryEngineEdgeCaseTests : BunitContext
         Assert.Equal("boss.name", DataListSchema.DefaultFieldKey((System.Linq.Expressions.Expression<Func<Person, string?>>)(p => p.Boss!.Name)));
     }
 
+    [Fact]
+    public void DataListStateQuery_names_the_parameter_of_a_filter_and_escapes_values_like_the_reader_unescapes_them()
+    {
+        var filter = DataListFilter.Text();
+        Assert.Equal("f.name", DataListStateQuery.FilterParameterName("name", filter.DefaultOperator, filter));
+        Assert.Equal("f.name.isNot", DataListStateQuery.FilterParameterName("name", FilterOperator.IsNot, filter));
+        Assert.Equal("f.name.contains", DataListStateQuery.FilterParameterName("name", FilterOperator.Contains));
+        Assert.Equal("isAnyOf", DataListStateQuery.OperatorName(FilterOperator.IsAnyOf));
+        Assert.Equal("~", DataListStateQuery.IncludeEmptyToken);
+        Assert.Equal("a%2Cb%7E%25", DataListStateQuery.EscapeValue("a,b~%"));
+    }
+
     private sealed record Person(string Name, Person? Boss);
 
     [Fact]

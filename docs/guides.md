@@ -457,7 +457,7 @@ foreach (DataListFieldInfo field in schema.FieldInfos)
 }
 ```
 
-`Snapshot` returns a copy, so a later write does not change it, and the empty prefix returns every key. `DataListSchema.DefaultFieldKey(e => e.Department.Name)` gives the key a field gets when the schema does not name one (`department.name`). `FilterRuleText` writes and reads the text of one rule (`OperatorName`, `Escape`, `Unescape`, `Format`, `Parse`), and `LocalInstants.At` gives the instant of a local day and time in a zone with the same rule for clock gaps and repeated hours that the filters use.
+`Snapshot` returns a copy, so a later write does not change it, and the empty prefix returns every key. `DataListSchema.DefaultFieldKey(e => e.Department.Name)` gives the key a field gets when the schema does not name one (`department.name`). For a GET form that submits a filter, `DataListStateQuery.FilterParameterName(key, op, filter)` names the field (`f.status`, or `f.status.isNot` for a non-default operator), `EscapeValue` writes a value the reader takes back unchanged, and `IncludeEmptyToken` is the value of the "include empty rows" field. `DataListSchema<T>.ReadField` and `LocalInstants` also exist for the Klyroo packages: they are hidden from IntelliSense and may change without notice.
 
 ## Bind several query keys to one record
 

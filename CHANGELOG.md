@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- `QueryState.Snapshot(prefix)`, `DataListSchema<T>.FieldInfos` (with the `DataListFieldInfo` record), `DataListSchema<T>.ReadField`, `DataListSchema.DefaultFieldKey`, and the public `FilterRuleText` and `LocalInstants` helpers: the API Klyroo.Table needs, documented, so a list component of your own can be built on the query layer.
+- `QueryState.Snapshot(prefix)`, `DataListSchema<T>.FieldInfos` (with the `DataListFieldInfo` class, read-only and built by the schema), `DataListSchema.DefaultFieldKey`, and `DataListStateQuery.FilterParameterName`, `OperatorName`, `EscapeValue` and `IncludeEmptyToken`: the API Klyroo.Table needs, documented, so a list component of your own can be built on the query layer. `DataListSchema<T>.ReadField` and `LocalInstants` are public for the Klyroo packages only and hidden from IntelliSense. `FilterRuleText` stays internal.
 
 ### Changed
 

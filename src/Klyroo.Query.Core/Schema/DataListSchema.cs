@@ -296,9 +296,11 @@ public sealed class DataListSchema<T> : DataListSchema
     /// <summary>
     /// The value of a field for a row, null-safe along its path (a null <c>Department</c> gives <see langword="null"/>, not an exception). The elements of
     /// a collection field are joined by commas. Returns <see langword="null"/> for a key that is not a field of the schema.
+    /// This member exists for the Klyroo packages (the data list reads its cells with it) and is not meant for application code; it may change without notice.
     /// </summary>
     /// <param name="item">The row.</param>
     /// <param name="key">The key of the field.</param>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public object? ReadField(T item, string key)
     {
         if (!_fields.TryGetValue(key, out var field)) return null;

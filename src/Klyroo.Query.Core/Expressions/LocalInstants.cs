@@ -1,9 +1,11 @@
 namespace Klyroo.Query;
 
 /// <summary>
+/// <b>This type exists for the Klyroo packages (Klyroo.Table uses it in its filter editor) and is not meant for application code; it may change without notice.</b>
 /// The instant of a local day and time in a time zone, with one rule for the two cases a wall clock does not name one instant. The server (the day and unit bounds of <see cref="DateUnit"/>), the filter editor
 /// of the data list and the reading of a posted date-time field all use it, so they cannot disagree on a day that starts in a gap.
 /// </summary>
+[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 public static class LocalInstants
 {
     /// <summary>
