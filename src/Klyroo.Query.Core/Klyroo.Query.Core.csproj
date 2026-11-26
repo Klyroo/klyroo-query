@@ -3,6 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Klyroo.Query</RootNamespace>
     <PackageId>Klyroo.Query.Core</PackageId>
+    <PackageTags>klyroo;query;filter;sort;paging;url-state;headless;nativeaot</PackageTags>
     <Description>Klyroo Query Core: Headless request, filter, sort, URL codec, IQueryable applier and in-memory executor. Zero UI dependency, NativeAOT compatible.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsTrimmable>true</IsTrimmable>

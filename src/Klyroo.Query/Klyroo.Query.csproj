@@ -3,6 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Klyroo.Query</RootNamespace>
     <PackageId>Klyroo.Query</PackageId>
+    <PackageTags>klyroo;blazor;query-string;url-state;filter;sort;paging</PackageTags>
     <Description>Klyroo Query for Blazor Web &amp; .NET MAUI Hybrid: URL QueryState synchronization built on Klyroo.Query.Core.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsTrimmable>true</IsTrimmable>

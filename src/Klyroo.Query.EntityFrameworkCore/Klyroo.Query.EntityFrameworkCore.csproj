@@ -3,6 +3,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <RootNamespace>Klyroo.Query.EntityFrameworkCore</RootNamespace>
     <PackageId>Klyroo.Query.EntityFrameworkCore</PackageId>
+    <PackageTags>klyroo;efcore;entity-framework;iqueryable;filter;sort;paging</PackageTags>
     <Description>Entity Framework Core async query adapter for Klyroo.Query.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
