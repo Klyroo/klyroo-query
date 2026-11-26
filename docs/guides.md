@@ -85,9 +85,12 @@ var tier = DataListFilter.Option(
 
 // A date filter at hour precision, for ranges of at most 31 days.
 var created = DataListFilter.Date(DateGranularity.Hour).WithMaxRangeDays(31);
+
+// A filter whose last value a list remembers between visits.
+var region = DataListFilter.Option().WithPersist();
 ```
 
-The executors read the operators, the default and the value shape. The rest (labels, options, number display, `WithFacets`, `WithOptionLimit`, `WithRemoteOptions`) are hints for an editor, such as the filter editor of Klyroo.Table; the executors ignore them. `WithFacets` is the exception in practice: it asks the list to request counts, and the counts come from the facets of a request.
+The executors read the operators, the default and the value shape. The rest (labels, options, number display, `WithFacets`, `WithOptionLimit`, `WithRemoteOptions`, `WithPersist`) are hints for an editor or a list, such as those of Klyroo.Table; the executors ignore them. `KlyDataList` stores the value of a `WithPersist` filter in the browser's `localStorage`, in the URL form of `DataListStateQuery`, and restores it when the address has no value for that filter. `WithFacets` is the exception in practice: it asks the list to request counts, and the counts come from the facets of a request.
 
 The schema also bounds what a request can ask for: `DefaultPageSize` (50 unless set), `MaxPageSize` (500), `MaxFilterRules` (100), `MaxListValues` (500) and `MaxFacetBuckets` (1000), each with a method on the builder.
 

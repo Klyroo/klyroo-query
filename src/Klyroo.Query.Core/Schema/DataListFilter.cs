@@ -86,7 +86,10 @@ public sealed class DataListFilter
     /// <summary>The most days a range of a date editor may cover, both ends included. <see langword="null"/> for no limit. This limits the editor only (the calendar, the presets and the typed ends): a range in the URL, a bound state or a request is not checked against it, and neither is it on the server.</summary>
     public int? MaxRangeDays { get; private set; }
 
-    /// <summary>Whether the user's last value is remembered between visits (browser storage), restored only when the URL has no value.</summary>
+    /// <summary>
+    /// Whether the user's last value is remembered between visits, restored only when the URL has no value. A hint for a list component: the executors and the URL codecs ignore it.
+    /// <c>KlyDataList</c> of Klyroo.Table keeps the value in the browser's <c>localStorage</c>, in the URL form of <see cref="DataListStateQuery"/>, and restores it on its first interactive render.
+    /// </summary>
     public bool Persist { get; private set; }
 
     /// <summary>The name of the filter in the interface (the tag, the add filter menu). <see langword="null"/> falls back to the title of the column with the same key, then to the key written as words.</summary>
@@ -185,7 +188,8 @@ public sealed class DataListFilter
         return copy.With(c => { c.DefaultValue = value; c.DefaultValueOperator = effective; c.DefaultIncludeEmpty = includeEmpty; });
     }
 
-    /// <summary>Remembers the last value of this filter between visits.</summary>
+    /// <summary>Remembers the last value of this filter between visits (see <see cref="Persist"/>): a list component stores it and restores it when the URL has no value for the filter.</summary>
+    /// <param name="persist">Whether to remember the value; <see langword="false"/> turns it off again.</param>
     public DataListFilter WithPersist(bool persist = true) => With(c => c.Persist = persist);
 
     /// <summary>Names the filter in the interface.</summary>

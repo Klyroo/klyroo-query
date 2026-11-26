@@ -148,7 +148,7 @@ The definition of a filter: its kind, the operators it allows, its default opera
 | `OptionLimit` | `int?` | How many options the editor lists before a "show more" button, or `null` to list them all. The selected options always show. A statically rendered editor lists them all. |
 | `Options` | `IReadOnlyList<DataListFilterOption>` | The options an option filter offers, in order; empty for the other kinds. Without them the editor lists the values of the facet counts (`DataListFilter.Facets`) and the values already selected. |
 | `OptionSort` | `DataListOptionSort?` | How the editor orders the options. `null` keeps the declared options in their order and lists the options that come from counts by count (the order of the facet). Not used for remote options, which keep the order of their source. |
-| `Persist` | `bool` | Whether the user's last value is remembered between visits (browser storage), restored only when the URL has no value. |
+| `Persist` | `bool` | Whether the user's last value is remembered between visits, restored only when the URL has no value. A hint for a list component: the executors and the URL codecs ignore it. `KlyDataList` of Klyroo.Table keeps the value in the browser's `localStorage`, in the URL form of `DataListStateQuery`, and restores it on its first interactive render. |
 | `RemoteOptions` | `DataListRemoteOptions?` | Where the options come from when they are loaded from a remote source, page by page, with a search. `null` for declared options and for options taken from the counts. |
 | `Step` | `decimal?` | The step of a number editor. |
 
@@ -175,7 +175,7 @@ The definition of a filter: its kind, the operators it allows, its default opera
 | `WithOptionLimit(int limit)` | `DataListFilter` | Lists only the first options of an option filter, with a "show more" button for the others. The selected options always show. |
 | `WithOptions(params DataListFilterOption[] options)` | `DataListFilter` | Sets the options the editor lists. Only for option filters. |
 | `WithOptionSort(DataListOptionSort sort)` | `DataListFilter` | Orders the declared options and the counted options of an option filter by count or by label (`DataListFilter.OptionSort`). Remote options keep the order of their source: the sort is ignored for them. |
-| `WithPersist(bool persist = true)` | `DataListFilter` | Remembers the last value of this filter between visits. |
+| `WithPersist(bool persist = true)` | `DataListFilter` | Remembers the last value of this filter between visits (see `DataListFilter.Persist`): a list component stores it and restores it when the URL has no value for the filter. |
 | `WithRemoteOptions(DataListOptionsProvider provider, DataListOptionsResolver? resolveSelected = null, int pageSize = 25, int minLength = 0)` | `DataListFilter` | Loads the options from a remote source, page by page and with a search, instead of declaring them. The editor of a UI library asks for a page when it is shown, searches while the user types and loads the next page as the list scrolls. |
 
 #### `DataListJsonContext`
