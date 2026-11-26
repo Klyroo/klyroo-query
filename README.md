@@ -27,6 +27,17 @@ You describe a row type once, with a schema built from lambda expressions. A req
 | [`Klyroo.Query`](https://www.nuget.org/packages/Klyroo.Query) | `QueryState`, `QueryValue<T>` and `QueryGroup<TRecord>` for Blazor, and the `AddKlyrooQuery` registration. Depends on `Klyroo.Query.Core`. |
 | [`Klyroo.Query.EntityFrameworkCore`](https://www.nuget.org/packages/Klyroo.Query.EntityFrameworkCore) | `EfAsyncQueryExecutor`, which runs the queries built by `Klyroo.Query.Core` with the async operators of EF Core. |
 
+## Prerequisites
+
+To use the library in an app:
+
+- **The .NET 10 SDK**, and an app that targets `net10.0`. The packages are prereleases, so every `dotnet add package` command needs `--prerelease`.
+- **`Klyroo.Query.Core`** has no other prerequisite: it runs in any .NET 10 app (console, worker, API, MAUI view model).
+- **`Klyroo.Query`** needs a Blazor app (Blazor Web App or .NET MAUI Blazor Hybrid) and `AddKlyrooQuery()` in `Program.cs`. It works in every render mode; static server rendering cannot navigate, so links carry the state there.
+- **`Klyroo.Query.EntityFrameworkCore`** needs Entity Framework Core 10.0.15 or later and a provider for your database.
+
+To build this repository you need the .NET 10 SDK (a newer SDK works too, see `global.json`). See [Contributing](CONTRIBUTING.md).
+
 ## Installation
 
 ```bash
@@ -150,7 +161,7 @@ Then Blazor. This component binds the `q` key of the URL to a search box. A link
 | [API reference](docs/api-reference.md) | Every public type and member |
 | [FAQ](docs/faq.md) | Troubleshooting and limitations |
 
-## Requirements
+## Compatibility
 
 - .NET 10 SDK. All three packages target `net10.0`.
 - `Klyroo.Query.Core` has no platform restriction. It is marked `IsAotCompatible` and `IsTrimmable`, and a console app using the in-memory executor, the URL codecs and the JSON context was published and run with NativeAOT on linux-x64.

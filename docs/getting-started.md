@@ -2,6 +2,8 @@
 
 This tutorial builds one small list end to end: a `Customer` schema, a request run against an in-memory list, the URL form of the list state, and a Blazor component that keeps a search box in sync with the address bar. The first three steps need only `Klyroo.Query.Core`, so they work in a console app, a worker or an API. The last two need Blazor.
 
+Check the [prerequisites](../README.md#prerequisites) first: the .NET 10 SDK, and a Blazor app for the last two steps.
+
 ## 1. Install the packages
 
 ```bash
