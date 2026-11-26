@@ -33,45 +33,10 @@ accent: "#ff4154"
 # The texture of the ground behind the header and the hero: blueprint-grid, dot-matrix, ruled-rows, baseline-grid, chart-ticks, halftone, cell-grid or node-dots.
 texture: dot-matrix
 
-# What the hero demonstrates. Either board: table | form (a board with feature chips and several results, authored in docs-site), or a simple hero: the code,
-# the lines the leader line starts at (focus) and one result (output: lines of text, or preview: ui-settings | display-stat | spreadsheet-rows).
+# What the hero demonstrates: the board of the library, with feature chips and several results (authored in klyroo-stack/docs-site).
 demo:
-  file: Program.cs
-  language: csharp
-  focus: 19-23
-  code: |
-    var schema = DataListSchema.For<Customer>(s => s
-        .RowKey(c => c.Id)
-        .Search(c => c.Name, c => c.Email)
-        .Field(c => c.Name, f => f.Sortable())
-        .Field(c => c.Age, f => f.Sortable()
-            .Filter(DataListFilter.Number(min: 0)))
-        .Field(c => c.Status, f => f
-            .Filter(DataListFilter.Option()))
-        .DefaultSort(c => c.Name));
+  board: query
 
-    var request = new DataListRequest(
-        new DataListPaging.Offset(Skip: 0, Take: 25),
-        [new DataListSort("age", Descending: true)],
-        DataListFilterGroup.And(new FilterRule(
-            "status", FilterOperator.Is,
-            new FilterValue.Text("Active"))),
-        new DataListSearch("ar"));
-
-    var page = schema.ExecuteInMemory(customers, request);
-
-    Console.WriteLine($"{page.TotalCount} customers");
-    foreach (var customer in page.Items)
-        Console.WriteLine($"{customer.Name}, {customer.Age}");
-  result:
-    title: What it prints
-    output: |
-      2 customers
-      Clara Diaz, 42
-      Alice Martin, 34
-
-# The pages in the order of the navigation. docs/README.md comes first, as "Documentation". A page that is not listed follows, by file name.
-# An entry is a file name below docs/ without .md, or a map with page and any of: title, navTitle, description, tocDepth, indexText. A group has a group name and its pages.
 nav:
   - group: Tutorial
     pages:
