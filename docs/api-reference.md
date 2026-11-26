@@ -4,7 +4,7 @@
 
 ## Klyroo.Query.Core
 
-Static classes and extensions (4) · Classes (12) · Records (27) · Interfaces (1) · Enums (8) · Delegates (3)
+Static classes and extensions (6) · Classes (12) · Records (28) · Interfaces (1) · Enums (8) · Delegates (3)
 
 ### Static classes and extensions
 
@@ -20,6 +20,25 @@ Converts a `DataListState` to and from URL query keys, as plain functions (no Bl
 | `static FromQuery(IEnumerable<KeyValuePair<string, string?>> query, DataListSchema schema, string? prefix, string? timeZone)` | `DataListState` | `DataListStateQuery.FromQuery` for a request that has a time zone: a date-time in a filter value without an offset (`2026-11-05T14:00`, what the `datetime-local` field of a static form posts) is the wall clock of that zone, not UTC. A date (`2026-11-05`) and a value with an offset do not depend on it. |
 | `static ToQuery(DataListState state, DataListSchema schema, string? prefix = null)` | `IReadOnlyDictionary<string, string>` | Writes the keys of a state that differ from the defaults. Rules the schema does not accept are left out, so the result always reads back. |
 
+#### `FilterRuleText`
+
+`Klyroo.Query` · service
+
+The text form of a filter rule's value in a URL: tokens separated by commas, where `,``~` and `%` inside a value are written `%2C``%7E``%25`, a bare `~` token means "include empty rows", a range is `from..to` (either side may be missing), numbers use the invariant culture (a dot) and dates are ISO 8601 (`yyyy-MM-dd` for a day, the round-trip format for an instant).
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `const IncludeEmptyToken = "~"` | `string` | The bare token that means "include empty rows" (`~`). |
+
+| Method | Returns | Description |
+| :--- | :--- | :--- |
+| `static Escape(string value)` | `string` | Writes a value into the URL text of a rule: `,``~` and `%` become `%2C``%7E``%25`. |
+| `static Format(FilterRule rule)` | `string` | The value text of a rule: payload tokens, then the include-empty token when set. |
+| `static OperatorName(FilterOperator op)` | `string` | The URL name of an operator: its name in camelCase (`notContains`). |
+| `static Parse(DataListFilter filter, string key, FilterOperator op, string raw, TimeZoneInfo? zone = null)` | `FilterRule?` | Reads a rule from its URL text, or returns `null` when the text does not fit the filter. A date-time without an offset (`2026-11-05T14:00`, what a `datetime-local` field of a static form posts) is the wall clock of `zone` (UTC when it is null), like the time field of the interactive editor; with an offset (`Z`, `+01:00`) it is that instant. |
+| `static TryParseOperator(string text, out FilterOperator op)` | `bool` | Reads the URL name of an operator (case-insensitive; a number is not a name). |
+| `static Unescape(string value)` | `string` | The inverse of `FilterRuleText.Escape`. |
+
 #### `InMemoryDataList`
 
 `Klyroo.Query` · service
@@ -30,6 +49,17 @@ Runs a `DataListRequest` against an in-memory list: search, filter tree, stable 
 | :--- | :--- | :--- |
 | `static ExecuteInMemory<T>(DataListSchema<T> schema, IEnumerable<T> items, DataListRequest request)` | `DataListResult<T>` | Executes a request. The request is first passed through `DataListSchema.Sanitize`. Query-only filters are skipped. Rows with a null along a field path (`e.Department.Name` with no department) are read as empty rather than throwing. |
 | `static InMemoryProvider<T>(DataListSchema<T> schema, IEnumerable<T> items)` | `DataListProvider<T>` | A `DataListProvider` over a list, for a data list whose rows are in memory. |
+
+#### `LocalInstants`
+
+`Klyroo.Query` · service
+
+The instant of a local day and time in a time zone, with one rule for the two cases a wall clock does not name one instant. The server (the day and unit bounds of `DateUnit`), the filter editor of the data list and the reading of a posted date-time field all use it, so they cannot disagree on a day that starts in a gap.
+
+| Method | Returns | Description |
+| :--- | :--- | :--- |
+| `static At(DateTime local, TimeZoneInfo zone)` | `DateTimeOffset` | The instant of `local` (the wall clock in `zone`; its kind is ignored). A time in the gap of a clock change (02:15 when the clocks go from 02:00 to 03:00, or the whole of 2011-12-30 in Pacific/Apia) is the instant the clocks resume after the gap, so a day that starts in a gap starts when the clocks resume. An ambiguous time (02:30 when the clocks go back from 03:00 to 02:00) is the earlier instant, so the end bound of a range that falls in the repeated hour stops at its first pass. |
+| `static At(DateOnly day, TimeOnly time, TimeZoneInfo zone)` | `DateTimeOffset` | The instant of a local day and time, see `LocalInstants.At`. |
 
 #### `QueryableDataList`
 
@@ -302,6 +332,7 @@ Describes what a data list can do with a row type: its fields, which are sortabl
 
 | Method | Returns | Description |
 | :--- | :--- | :--- |
+| `static DefaultFieldKey(LambdaExpression property)` | `string?` | The key a field gets when the schema does not name one: the member path of `property` with each segment in camelCase (`e => e.Department.Name` gives `department.name`). Lets a UI column and the schema agree on a key without a string. |
 | `static For<T>(Action<DataListSchemaBuilder<T>> configure)` | `DataListSchema<T>` | Starts the schema of a row type. See `DataListSchemaBuilder`. |
 | `IsQueryFilter(string key)` | `bool` | Whether `key` is a query-only filter: part of the request for the provider, never matched against rows by the in-memory executor. |
 | `QueryFilterRules(DataListRequest request)` | `IReadOnlyList<FilterRule>` | The query-only rules of a request, for the provider to interpret. Looks through nested groups. |
@@ -316,12 +347,14 @@ The schema of a row type `T`: a `DataListSchema` that can also read a row's key 
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
+| `FieldInfos` | `IReadOnlyList<DataListFieldInfo>` | The registered fields in declaration order, described for a UI (key, sortable, collection, filter). Use `DataListSchema.ReadField` to read one for a row. |
 | `HasRowKey` | `bool` | Whether the schema has a `RowKey`. Cursor paging needs one. |
 
 | Method | Returns | Description |
 | :--- | :--- | :--- |
 | `GetRowKey(T item)` | `string` | The stable key of a row, as text (invariant culture). |
 | `GetRowLabel(T item)` | `string?` | The label that names a row for accessibility ("Select Alice"), or `null`. |
+| `ReadField(T item, string key)` | `object?` | The value of a field for a row, null-safe along its path (a null `Department` gives `null`, not an exception). The elements of a collection field are joined by commas. Returns `null` for a key that is not a field of the schema. |
 
 #### `DataListSchemaBuilder<T>`
 
@@ -431,6 +464,23 @@ The counts of one facet.
 | `Options` (init) | `IReadOnlyList<DataListFacetOption>` | The options, by count descending then value (ordinal), after `Search`, `Skip` and `Limit`. |
 | `Total` (init) | `int` | The number of distinct options before `Skip` and `Limit` (after `Search`); more are available when `Skip + Options.Count < Total`. |
 | `Truncated` (init) | `bool` | The facet has more distinct values than `DataListSchema.MaxFacetBuckets`: the options are the ones with the highest counts, and the others are not listed or counted in `DataListFacetResult.Total`. A UI can say "more values". |
+
+#### `DataListFieldInfo`
+
+`Klyroo.Query` · record
+
+What a data list component needs to know about a registered field of a `DataListSchema`, without the expression machinery behind it.
+
+| Constructor | Description |
+| :--- | :--- |
+| `DataListFieldInfo(string Key, bool Sortable, bool IsCollection, DataListFilter? Filter)` | What a data list component needs to know about a registered field of a `DataListSchema`, without the expression machinery behind it. |
+
+| Property | Type | Description |
+| :--- | :--- | :--- |
+| `Filter` (init) | `DataListFilter?` | The filter of the field, or `null` when it cannot be filtered. |
+| `IsCollection` (init) | `bool` | Whether the field holds several values per row (a collection); such a field has no single value to show or sort on. |
+| `Key` (init) | `string` | The stable key of the field, as used in the URL and in `DataListSchema.SortKeys`. |
+| `Sortable` (init) | `bool` | Whether the field can be sorted on. |
 
 #### `DataListFilterGroup`
 
@@ -901,6 +951,23 @@ Returns the options of values that no loaded page holds (a value restored from t
 
 Loads a page of rows for a request. The same shape for an in-memory list, an EF query or an HTTP call.
 
+## Klyroo.Query.EntityFrameworkCore
+
+Static classes and extensions (1)
+
+### Static classes and extensions
+
+#### `EfAsyncQueryExecutor`
+
+`Klyroo.Query.EntityFrameworkCore` · service
+
+Runs the queries that `Klyroo.Query.Core` builds (`DataListQuery`, `DataListFacetQuery`) with the asynchronous operators of Entity Framework Core. They are plain static methods, so they work on any `IQueryable` an EF Core provider can run.
+
+| Method | Returns | Description |
+| :--- | :--- | :--- |
+| `static CountAsync<T>(IQueryable<T> query, CancellationToken cancellationToken = null)` | `ValueTask<int>` | Counts the rows of a query in the database (`SELECT COUNT(*)`), for example `DataListQuery.Matching`. |
+| `static ToListAsync<T>(IQueryable<T> query, CancellationToken cancellationToken = null)` | `ValueTask<List<T>>` | Loads the rows of a query into a list, for example `DataListQuery.Page` or `DataListFacetQuery.Buckets`. |
+
 ## Klyroo.Query
 
 Static classes and extensions (1) · Classes (4) · Enums (1)
@@ -982,6 +1049,7 @@ The query string of the current URL as state: read it, change it, follow it when
 | `HrefWith(params (string, string?)[] changes)` | `string` | The same as `QueryState.HrefWith`, with the changes as (key, value) tuples: `HrefWith(("p", "2"), ("q", null))`. |
 | `Set(string key, string? value, QueryHistory history = Replace)` | `bool` | Sets a query key; a null value removes it. Returns false when nothing was written because the renderer is not interactive. |
 | `SetMany(IEnumerable<KeyValuePair<string, string?>> changes, QueryHistory history = Replace)` | `bool` | Sets several keys in one change: one navigation, one history entry. A null value removes its key. |
+| `Snapshot(string prefix)` | `IReadOnlyList<KeyValuePair<string, string?>>` | Every key and value of the query whose key matches `prefix` (all of them for the empty prefix), with the writes of the current handler on top: what a component that owns a prefix reads its state from. |
 | `Subscribe(string prefix, Action<IReadOnlyList<string>> handler)` | `IDisposable` | Calls `handler` with the keys that changed, when a key matching `prefix` changes: through a write of this service, or through the URL (Back and Forward, a link, a typed URL). The handler runs on the thread that raised the change: from a component, go through `InvokeAsync` before rendering. It is not called for a navigation that leaves the state as it already is. |
 | `UseRenderer(RendererInfo renderer)` | `void` | Tells the service whether the renderer is interactive. Only an interactive renderer can navigate, so while this is false a write changes nothing (see the remarks of the class). `QueryState.Bind`` and `QueryState.Group`` call it with the renderer you pass; call it yourself before the raw `QueryState.Set` and `QueryState.SetMany`, from `OnInitialized` with the `RendererInfo` of the component. |
 
@@ -1016,20 +1084,3 @@ Whether a change of the URL adds a history entry (the Back button undoes it) or 
 | :--- | :--- |
 | `Push` | A new history entry: a page, a sort, an applied filter. |
 | `Replace` | The current entry is rewritten: typing in a search box, a normalized value. |
-
-## Klyroo.Query.EntityFrameworkCore
-
-Static classes and extensions (1)
-
-### Static classes and extensions
-
-#### `EfAsyncQueryExecutor`
-
-`Klyroo.Query.EntityFrameworkCore` · service
-
-Runs the queries that `Klyroo.Query.Core` builds (`DataListQuery`, `DataListFacetQuery`) with the asynchronous operators of Entity Framework Core. They are plain static methods, so they work on any `IQueryable` an EF Core provider can run.
-
-| Method | Returns | Description |
-| :--- | :--- | :--- |
-| `static CountAsync<T>(IQueryable<T> query, CancellationToken cancellationToken = null)` | `ValueTask<int>` | Counts the rows of a query in the database (`SELECT COUNT(*)`), for example `DataListQuery.Matching`. |
-| `static ToListAsync<T>(IQueryable<T> query, CancellationToken cancellationToken = null)` | `ValueTask<List<T>>` | Loads the rows of a query into a list, for example `DataListQuery.Page` or `DataListFacetQuery.Buckets`. |
