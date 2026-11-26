@@ -277,11 +277,51 @@ public sealed class QueryEngineEdgeCaseTests : BunitContext
             .Field(p => p.Boss!.Name, f => f.Key("bossName")));
         Assert.Equal(["name", "bossName"], schema.FieldInfos.Select(f => f.Key).ToArray());
         Assert.True(schema.FieldInfos[0].Sortable);
-        Assert.Equal("ann", schema.ReadField(new Person("ann", null), "name"));
-        Assert.Null(schema.ReadField(new Person("ann", null), "bossName"));
-        Assert.Equal("bo", schema.ReadField(new Person("ann", new Person("bo", null)), "bossName"));
-        Assert.Null(schema.ReadField(new Person("ann", null), "nope"));
+        Assert.Equal("ann", schema.FormatField(new Person("ann", null), "name", null, null));
+        Assert.Null(schema.FormatField(new Person("ann", null), "bossName", null, null));
+        Assert.Equal("bo", schema.FormatField(new Person("ann", new Person("bo", null)), "bossName", null, null));
+        Assert.Null(schema.FormatField(new Person("ann", null), "nope", null, null));
         Assert.Equal("boss.name", DataListSchema.DefaultFieldKey((System.Linq.Expressions.Expression<Func<Person, string?>>)(p => p.Boss!.Name)));
+    }
+
+    [Fact]
+    public void FormatField_formats_with_the_format_and_culture_and_joins_the_elements_of_a_collection()
+    {
+        var schema = DataListSchema.For<Product>(s => s
+            .Field(p => p.Price, f => f.Sortable())
+            .Field(p => p.Shipped, f => f.Sortable())
+            .Collection(p => p.Tags, t => t, c => c.Key("tags")));
+        var product = new Product(1234.5m, new DateOnly(2026, 3, 9), 2.5, ["a", "b"]);
+        Assert.Equal("1234.50", schema.FormatField(product, "price", "F2", System.Globalization.CultureInfo.InvariantCulture));
+        Assert.Equal("1234,50", schema.FormatField(product, "price", "F2", new System.Globalization.CultureInfo("fr-FR")));
+        Assert.Equal("09/03/2026", schema.FormatField(product, "shipped", "d", new System.Globalization.CultureInfo("fr-FR")));
+        Assert.Equal("a, b", schema.FormatField(product, "tags", null, null));
+        Assert.True(schema.FieldInfos.Single(f => f.Key == "price").HasStructuredValue);
+        Assert.True(schema.FieldInfos.Single(f => f.Key == "shipped").HasStructuredValue);
+        Assert.False(schema.FieldInfos.Single(f => f.Key == "tags").HasStructuredValue);
+    }
+
+    [Fact]
+    public void TryReadNumber_reads_numeric_fields_only_and_CompareField_sorts_like_the_executor()
+    {
+        var schema = DataListSchema.For<Product>(s => s
+            .Field(p => p.Price, f => f.Sortable())
+            .Field(p => p.Weight, f => f.Sortable())
+            .Field(p => p.Shipped, f => f.Sortable())
+            .Collection(p => p.Tags, t => t, c => c.Key("tags")));
+        var cheap = new Product(10m, new DateOnly(2026, 1, 1), 1.5, []);
+        var dear = new Product(200m, new DateOnly(2025, 1, 1), double.NaN, []);
+        Assert.True(schema.TryReadNumber(cheap, "price", out var price));
+        Assert.Equal(10m, price);
+        Assert.True(schema.TryReadNumber(cheap, "weight", out var weight));
+        Assert.Equal(1.5m, weight);
+        Assert.False(schema.TryReadNumber(dear, "weight", out _));
+        Assert.False(schema.TryReadNumber(cheap, "shipped", out _));
+        Assert.False(schema.TryReadNumber(cheap, "tags", out _));
+        Assert.False(schema.TryReadNumber(cheap, "nope", out _));
+        Assert.True(schema.CompareField(cheap, dear, "price") < 0);
+        Assert.True(schema.CompareField(cheap, dear, "shipped") > 0);
+        Assert.Equal(0, schema.CompareField(cheap, dear, "nope"));
     }
 
     [Fact]
@@ -297,6 +337,8 @@ public sealed class QueryEngineEdgeCaseTests : BunitContext
     }
 
     private sealed record Person(string Name, Person? Boss);
+
+    private sealed record Product(decimal Price, DateOnly Shipped, double Weight, string[] Tags);
 
     [Fact]
     public async Task EfCore_Sqlite_executes_keyset_cursor_paging_multi_sort_and_complex_filters_in_SQL()

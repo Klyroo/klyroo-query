@@ -9,6 +9,8 @@ namespace Klyroo.Query;
 /// </summary>
 internal sealed class SortValueComparer(bool descending) : IComparer<object?>
 {
+    public static readonly SortValueComparer Ascending = new(false);
+
     /// <summary>Nulls sort last whatever the direction; the direction flips only the order of the values.</summary>
     public int Compare(object? x, object? y)
     {

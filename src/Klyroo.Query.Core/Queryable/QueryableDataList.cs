@@ -53,18 +53,19 @@ public sealed class DataListRow<T>
     /// <summary>The row.</summary>
     public T Item { get; set; } = default!;
 
+    // The cursor of the next page is made from these: only ToResult reads them (the projection of the query fills them), so they stay out of the public surface.
     /// <summary>The sort values, boxed, one per sort rule (a null is a null in the database).</summary>
-    public object?[] SortValues { get; set; } = [];
+    internal object?[] SortValues { get; set; } = [];
 
     /// <summary>The row key, boxed.</summary>
-    public object? Key { get; set; }
+    internal object? Key { get; set; }
 }
 
 /// <summary>One option of a facet as read from the database: the value in its own type, and the number of rows that have it.</summary>
 public sealed class DataListFacetBucket
 {
-    /// <summary>The value of the field, boxed, never null or an empty string.</summary>
-    public object? Value { get; set; }
+    /// <summary>The value of the field, boxed, never null or an empty string. Only <see cref="DataListFacetQuery{T}.ToResult(IEnumerable{DataListFacetBucket}, int?)"/> reads it.</summary>
+    internal object? Value { get; set; }
 
     /// <summary>The number of rows that have the value (a row counts once per distinct value, whatever the number of elements that carry it).</summary>
     public int Count { get; set; }
@@ -333,9 +334,9 @@ public static class QueryableDataList
         var init = Expression.MemberInit(
             Expression.New(typeof(DataListRow<T>)),
             Expression.Bind(typeof(DataListRow<T>).GetProperty(nameof(DataListRow<T>.Item))!, p),
-            Expression.Bind(typeof(DataListRow<T>).GetProperty(nameof(DataListRow<T>.SortValues))!, Expression.NewArrayInit(typeof(object), values)),
+            Expression.Bind(typeof(DataListRow<T>).GetProperty(nameof(DataListRow<T>.SortValues), QueryableBuilder.Internal)!, Expression.NewArrayInit(typeof(object), values)),
             Expression.Bind(
-                typeof(DataListRow<T>).GetProperty(nameof(DataListRow<T>.Key))!,
+                typeof(DataListRow<T>).GetProperty(nameof(DataListRow<T>.Key), QueryableBuilder.Internal)!,
                 schema.RowKeyAccessor is { } key ? Expression.Convert(key.Bind(p, nullSafe: false), typeof(object)) : Expression.Constant(null, typeof(object))));
         return page.Select(Expression.Lambda<Func<T, DataListRow<T>>>(init, p));
     }
@@ -412,6 +413,8 @@ internal static class CursorPaging
 /// <summary>The generic plumbing of the applier: <c>Queryable</c> calls whose key types are only known at runtime (the type of a field), built as expression trees.</summary>
 internal static class QueryableBuilder
 {
+    internal const BindingFlags Internal = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+
     private static readonly MethodInfo OrderByDef = Def((Func<IQueryable<int>, Expression<Func<int, int>>, IOrderedQueryable<int>>)Queryable.OrderBy);
     private static readonly MethodInfo OrderByDescendingDef = Def((Func<IQueryable<int>, Expression<Func<int, int>>, IOrderedQueryable<int>>)Queryable.OrderByDescending);
     private static readonly MethodInfo ThenByDef = Def((Func<IOrderedQueryable<int>, Expression<Func<int, int>>, IOrderedQueryable<int>>)Queryable.ThenBy);
@@ -618,7 +621,7 @@ internal static class QueryableBuilder
         grouped = CallAny(grouped, TakeMethod, [groupingType], Expression.Convert(Expression.Field(Expression.Constant(new ValueBox(maxBuckets + 1)), ValueBox.ValueField), typeof(int)));
         var bucket = Expression.MemberInit(
             Expression.New(typeof(DataListFacetBucket)),
-            Expression.Bind(typeof(DataListFacetBucket).GetProperty(nameof(DataListFacetBucket.Value))!, Expression.Convert(Member(g, "Key"), typeof(object))),
+            Expression.Bind(typeof(DataListFacetBucket).GetProperty(nameof(DataListFacetBucket.Value), QueryableBuilder.Internal)!, Expression.Convert(Member(g, "Key"), typeof(object))),
             Expression.Bind(typeof(DataListFacetBucket).GetProperty(nameof(DataListFacetBucket.Count))!, count));
         var select = SelectDef.MakeGenericMethod(groupingType, typeof(DataListFacetBucket));
         var call = Expression.Call(select, grouped.Expression, Expression.Quote(QueryableBuilder.Lambda(bucket, g)));

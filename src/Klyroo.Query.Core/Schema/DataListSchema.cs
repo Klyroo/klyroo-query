@@ -289,24 +289,79 @@ public sealed class DataListSchema<T> : DataListSchema
 
     private IReadOnlyList<DataListFieldInfo>? _fieldInfos;
 
-    /// <summary>The registered fields in declaration order, described for a UI (key, sortable, collection, filter). Use <see cref="ReadField"/> to read one for a row.</summary>
+    /// <summary>The registered fields in declaration order, described for a UI (key, sortable, collection, filter). Use <see cref="FormatField"/> to read one for a row.</summary>
     public IReadOnlyList<DataListFieldInfo> FieldInfos =>
-        _fieldInfos ??= [.. Fields.Select(f => new DataListFieldInfo(f.Key, f.Sortable, f.IsCollection, f.Filter))];
+        _fieldInfos ??= [.. Fields.Select(f => new DataListFieldInfo(f.Key, f.Sortable, f.IsCollection, f.Filter, f.HasStructuredValue))];
 
     /// <summary>
-    /// The value of a field for a row, null-safe along its path (a null <c>Department</c> gives <see langword="null"/>, not an exception). The elements of
-    /// a collection field are joined by commas. Returns <see langword="null"/> for a key that is not a field of the schema.
+    /// The text of a field for a row, null-safe along its path (a null <c>Department</c> gives <see langword="null"/>, not an exception): a number, date or other
+    /// <see cref="IFormattable"/> value is formatted with <paramref name="format"/> and <paramref name="provider"/>, anything else with <c>ToString()</c>. The elements of
+    /// a collection field are formatted one by one and joined by commas. Returns <see langword="null"/> for a null value and for a key that is not a field of the schema.
     /// This member exists for the Klyroo packages (the data list reads its cells with it) and is not meant for application code; it may change without notice.
     /// </summary>
     /// <param name="item">The row.</param>
     /// <param name="key">The key of the field.</param>
+    /// <param name="format">A format string for the value (<c>"C2"</c>, <c>"d"</c>), or <see langword="null"/> for the default format of its type.</param>
+    /// <param name="provider">The culture to format with, or <see langword="null"/> for the current culture.</param>
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public object? ReadField(T item, string key)
+    public string? FormatField(T item, string key, string? format, IFormatProvider? provider)
     {
         if (!_fields.TryGetValue(key, out var field)) return null;
-        return field.IsCollection
-            ? string.Join(", ", field.Values(item).Where(v => v is not null))
-            : field.Getter(item);
+        if (!field.IsCollection) return FormatValue(field.Getter(item), format, provider);
+        return string.Join(", ", field.Values(item).Select(v => FormatValue(v, format, provider)).Where(t => t is not null));
+    }
+
+    private static string? FormatValue(object? value, string? format, IFormatProvider? provider) => value switch
+    {
+        null => null,
+        IFormattable formattable => formattable.ToString(string.IsNullOrEmpty(format) ? null : format, provider),
+        _ => value.ToString(),
+    };
+
+    /// <summary>
+    /// Reads a numeric field for a row as a <see cref="decimal"/>, for a total or an average. Returns <see langword="false"/> for a key that is not a field of the schema,
+    /// a field that is not a number (text, date, boolean, enum), a collection field, a null value, and a <see cref="double"/> that is not finite or does not fit a decimal.
+    /// This member exists for the Klyroo packages and is not meant for application code; it may change without notice.
+    /// </summary>
+    /// <param name="item">The row.</param>
+    /// <param name="key">The key of the field.</param>
+    /// <param name="value">The number.</param>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public bool TryReadNumber(T item, string key, out decimal value)
+    {
+        value = 0m;
+        if (!_fields.TryGetValue(key, out var field) || field.IsCollection || !TextConvert.IsNumeric(field.Accessor.UnderlyingType)) return false;
+        try
+        {
+            switch (field.Getter(item))
+            {
+                case null: return false;
+                case decimal d: value = d; return true;
+                case double db when double.IsFinite(db): value = (decimal)db; return true;
+                case float fl when float.IsFinite(fl): value = (decimal)fl; return true;
+                case double or float: return false;
+                case var n: value = Convert.ToDecimal(n, System.Globalization.CultureInfo.InvariantCulture); return true;
+            }
+        }
+        catch (OverflowException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Compares two rows by a field in the order a sort on that field gives: strings in natural order, numbers and dates by value, nulls last.
+    /// Returns 0 for a key that is not a field of the schema and for a collection field.
+    /// This member exists for the Klyroo packages and is not meant for application code; it may change without notice.
+    /// </summary>
+    /// <param name="first">The first row.</param>
+    /// <param name="second">The second row.</param>
+    /// <param name="key">The key of the field.</param>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public int CompareField(T first, T second, string key)
+    {
+        if (!_fields.TryGetValue(key, out var field) || field.IsCollection) return 0;
+        return SortValueComparer.Ascending.Compare(field.Getter(first), field.Getter(second));
     }
 
     internal IReadOnlyList<ValueSource> SearchSources { get; }

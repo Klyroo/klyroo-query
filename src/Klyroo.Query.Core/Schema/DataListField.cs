@@ -25,6 +25,18 @@ internal sealed class DataListField<T>
 
     public bool IsCollection => Source.IsCollection;
 
+    /// <summary>The values are numbers, dates, times, GUIDs or booleans (see <see cref="DataListFieldInfo.HasStructuredValue"/>).</summary>
+    public bool HasStructuredValue
+    {
+        get
+        {
+            var type = Accessor.UnderlyingType;
+            return TextConvert.IsNumeric(type) || type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(DateOnly)
+                || type == typeof(TimeOnly) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(bool)
+                || type == typeof(Int128) || type == typeof(UInt128) || type == typeof(nint) || type == typeof(nuint);
+        }
+    }
+
     public bool Sortable { get; }
 
     /// <summary>The <see cref="DateTime"/> values are wall-clock times in the request time zone, not UTC.</summary>

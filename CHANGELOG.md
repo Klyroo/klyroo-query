@@ -9,9 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- `QueryState.Snapshot(prefix)`, `DataListSchema<T>.FieldInfos` (with the `DataListFieldInfo` class, read-only and built by the schema), `DataListSchema.DefaultFieldKey`, and `DataListStateQuery.FilterParameterName`, `OperatorName`, `EscapeValue` and `IncludeEmptyToken`: the API Klyroo.Table needs, documented, so a list component of your own can be built on the query layer. `DataListSchema<T>.ReadField` and `LocalInstants` are public for the Klyroo packages only and hidden from IntelliSense. `FilterRuleText` stays internal.
+- `QueryState.Snapshot(prefix)`, `DataListSchema<T>.FieldInfos` (with the `DataListFieldInfo` class, read-only and built by the schema), `DataListSchema.DefaultFieldKey`, and `DataListStateQuery.FilterParameterName`, `OperatorName`, `EscapeValue` and `IncludeEmptyToken`: the API Klyroo.Table needs, documented, so a list component of your own can be built on the query layer. `DataListSchema<T>.FormatField`, `TryReadNumber`, `CompareField` and `LocalInstants` are public for the Klyroo packages only and hidden from IntelliSense. `FilterRuleText` stays internal.
 
 ### Changed
+
+- **Breaking:** `DataListSchema<T>.ReadField`, which returned a boxed `object?`, is replaced by `FormatField(item, key, format, provider)` (the text of a field, null-safe, collections joined by commas), `TryReadNumber(item, key, out decimal)` (a numeric field for totals and averages) and `CompareField(first, second, key)` (the sort order of two rows by a field). `DataListFieldInfo.HasStructuredValue` tells whether a field holds numbers, dates, times, GUIDs or booleans.
+- **Breaking:** `DataListRow<T>.SortValues` and `Key`, and `DataListFacetBucket.Value`, are internal: only `ToResult` reads them to build the cursor and the facet, so the boxed values no longer appear in the public API. Load the rows and buckets as before and pass them to `ToResult`.
 
 - The packages no longer grant `InternalsVisibleTo` to Klyroo.Table, Klyroo.Table.Core or their tests: a sibling package uses only public API.
 

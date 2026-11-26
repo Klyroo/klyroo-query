@@ -453,11 +453,15 @@ DataListState state = DataListStateQuery.FromQuery(pairs, schema, prefix: "custo
 foreach (DataListFieldInfo field in schema.FieldInfos)
 {
     if (field.IsCollection) continue;
-    object? value = schema.ReadField(row, field.Key); // null-safe along the path, collections joined by commas
+    // Null-safe along the path, collections joined by commas; null for a null value.
+    string? text = schema.FormatField(row, field.Key, format: "N0", provider: CultureInfo.CurrentCulture);
+
+    // A numeric field as a number, for a total; false for text, dates, collections and nulls.
+    if (schema.TryReadNumber(row, field.Key, out decimal number)) total += number;
 }
 ```
 
-`Snapshot` returns a copy, so a later write does not change it, and the empty prefix returns every key. `DataListSchema.DefaultFieldKey(e => e.Department.Name)` gives the key a field gets when the schema does not name one (`department.name`). For a GET form that submits a filter, `DataListStateQuery.FilterParameterName(key, op, filter)` names the field (`f.status`, or `f.status.isNot` for a non-default operator), `EscapeValue` writes a value the reader takes back unchanged, and `IncludeEmptyToken` is the value of the "include empty rows" field. `DataListSchema<T>.ReadField` and `LocalInstants` also exist for the Klyroo packages: they are hidden from IntelliSense and may change without notice.
+`Snapshot` returns a copy, so a later write does not change it, and the empty prefix returns every key. `DataListSchema.DefaultFieldKey(e => e.Department.Name)` gives the key a field gets when the schema does not name one (`department.name`). For a GET form that submits a filter, `DataListStateQuery.FilterParameterName(key, op, filter)` names the field (`f.status`, or `f.status.isNot` for a non-default operator), `EscapeValue` writes a value the reader takes back unchanged, and `IncludeEmptyToken` is the value of the "include empty rows" field. `DataListSchema<T>.FormatField`, `TryReadNumber`, `CompareField` and `LocalInstants` also exist for the Klyroo packages: they are hidden from IntelliSense and may change without notice. `DataListFieldInfo.HasStructuredValue` says whether a field holds numbers, dates, times, GUIDs or booleans (text a person did not type, which a spreadsheet export need not guard against formulas).
 
 ## Bind several query keys to one record
 

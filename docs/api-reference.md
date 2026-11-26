@@ -109,7 +109,6 @@ One option of a facet as read from the database: the value in its own type, and 
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `Count` (get, set) | `int` | The number of rows that have the value (a row counts once per distinct value, whatever the number of elements that carry it). |
-| `Value` (get, set) | `object?` | The value of the field, boxed, never null or an empty string. |
 
 #### `DataListFacetQuery<T>`
 
@@ -291,8 +290,6 @@ A row of a page together with what the database computed for its cursor: the val
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `Item` (get, set) | `T` | The row. |
-| `Key` (get, set) | `object?` | The row key, boxed. |
-| `SortValues` (get, set) | `object?[]` | The sort values, boxed, one per sort rule (a null is a null in the database). |
 
 #### `DataListSchema`
 
@@ -335,14 +332,16 @@ The schema of a row type `T`: a `DataListSchema` that can also read a row's key 
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
-| `FieldInfos` | `IReadOnlyList<DataListFieldInfo>` | The registered fields in declaration order, described for a UI (key, sortable, collection, filter). Use `DataListSchema.ReadField` to read one for a row. |
+| `FieldInfos` | `IReadOnlyList<DataListFieldInfo>` | The registered fields in declaration order, described for a UI (key, sortable, collection, filter). Use `DataListSchema.FormatField` to read one for a row. |
 | `HasRowKey` | `bool` | Whether the schema has a `RowKey`. Cursor paging needs one. |
 
 | Method | Returns | Description |
 | :--- | :--- | :--- |
+| `CompareField(T first, T second, string key)` | `int` | Compares two rows by a field in the order a sort on that field gives: strings in natural order, numbers and dates by value, nulls last. Returns 0 for a key that is not a field of the schema and for a collection field. This member exists for the Klyroo packages and is not meant for application code; it may change without notice. |
+| `FormatField(T item, string key, string? format, IFormatProvider? provider)` | `string?` | The text of a field for a row, null-safe along its path (a null `Department` gives `null`, not an exception): a number, date or other `IFormattable` value is formatted with `format` and `provider`, anything else with `ToString()`. The elements of a collection field are formatted one by one and joined by commas. Returns `null` for a null value and for a key that is not a field of the schema. This member exists for the Klyroo packages (the data list reads its cells with it) and is not meant for application code; it may change without notice. |
 | `GetRowKey(T item)` | `string` | The stable key of a row, as text (invariant culture). |
 | `GetRowLabel(T item)` | `string?` | The label that names a row for accessibility ("Select Alice"), or `null`. |
-| `ReadField(T item, string key)` | `object?` | The value of a field for a row, null-safe along its path (a null `Department` gives `null`, not an exception). The elements of a collection field are joined by commas. Returns `null` for a key that is not a field of the schema. This member exists for the Klyroo packages (the data list reads its cells with it) and is not meant for application code; it may change without notice. |
+| `TryReadNumber(T item, string key, out decimal value)` | `bool` | Reads a numeric field for a row as a `Decimal`, for a total or an average. Returns `false` for a key that is not a field of the schema, a field that is not a number (text, date, boolean, enum), a collection field, a null value, and a `Double` that is not finite or does not fit a decimal. This member exists for the Klyroo packages and is not meant for application code; it may change without notice. |
 
 #### `DataListSchemaBuilder<T>`
 
@@ -462,6 +461,7 @@ What a data list component needs to know about a registered field of a `DataList
 | Property | Type | Description |
 | :--- | :--- | :--- |
 | `Filter` (init) | `DataListFilter?` | The filter of the field, or `null` when it cannot be filtered. |
+| `HasStructuredValue` (init) | `bool` | Whether the values of the field are numbers, dates, times, GUIDs or booleans: the text of such a value is produced by the type, not typed by a person, so it cannot start a spreadsheet formula. |
 | `IsCollection` (init) | `bool` | Whether the field holds several values per row (a collection); such a field has no single value to show or sort on. |
 | `Key` (init) | `string` | The stable key of the field, as used in the URL and in `DataListSchema.SortKeys`. |
 | `Sortable` (init) | `bool` | Whether the field can be sorted on. |
