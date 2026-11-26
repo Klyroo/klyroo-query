@@ -21,8 +21,8 @@ packages:
 
 # The home page. headline is two lines, the second in the accent color; lead is the paragraph under it. Without them: the title and the tagline.
 headline: |
-  A typed query model
-  for data lists in .NET.
+  Typed queries for
+  data lists in .NET.
 lead: >-
   Describe a row type once. Search, filters, sort, paging and facets become plain data that serializes to JSON, runs over a list or an IQueryable, and has a URL form that survives a round trip.
 
@@ -38,24 +38,27 @@ texture: dot-matrix
 demo:
   file: Program.cs
   language: csharp
-  focus: 16-20
+  focus: 19-23
   code: |
     var schema = DataListSchema.For<Customer>(s => s
         .RowKey(c => c.Id)
         .Search(c => c.Name, c => c.Email)
         .Field(c => c.Name, f => f.Sortable())
-        .Field(c => c.Age, f => f.Sortable().Filter(DataListFilter.Number(min: 0)))
-        .Field(c => c.Status, f => f.Filter(DataListFilter.Option()))
+        .Field(c => c.Age, f => f.Sortable()
+            .Filter(DataListFilter.Number(min: 0)))
+        .Field(c => c.Status, f => f
+            .Filter(DataListFilter.Option()))
         .DefaultSort(c => c.Name));
 
-    // Active customers whose name or email contains "ar", oldest first, 25 per page.
     var request = new DataListRequest(
         new DataListPaging.Offset(Skip: 0, Take: 25),
         [new DataListSort("age", Descending: true)],
-        DataListFilterGroup.And(new FilterRule("status", FilterOperator.Is, new FilterValue.Text("Active"))),
+        DataListFilterGroup.And(new FilterRule(
+            "status", FilterOperator.Is,
+            new FilterValue.Text("Active"))),
         new DataListSearch("ar"));
 
-    DataListResult<Customer> page = schema.ExecuteInMemory(customers, request);
+    var page = schema.ExecuteInMemory(customers, request);
 
     Console.WriteLine($"{page.TotalCount} customers");
     foreach (var customer in page.Items)
