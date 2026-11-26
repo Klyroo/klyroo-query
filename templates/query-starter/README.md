@@ -1,1 +1,0 @@
-# Klyroo Query Starter Template
