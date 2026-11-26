@@ -4,7 +4,7 @@
 
 ## Klyroo.Query.Core
 
-Static classes and extensions (6) · Classes (12) · Records (28) · Interfaces (1) · Enums (8) · Delegates (3)
+Static classes and extensions (5) · Classes (12) · Records (28) · Interfaces (1) · Enums (8) · Delegates (3)
 
 ### Static classes and extensions
 
@@ -14,30 +14,18 @@ Static classes and extensions (6) · Classes (12) · Records (28) · Interfaces 
 
 Converts a `DataListState` to and from URL query keys, as plain functions (no Blazor, no `NavigationManager`), under an optional prefix joined with a dot (`users.q`). Values equal to the defaults of the schema are left out, and bad input is dropped, never thrown.
 
-| Method | Returns | Description |
-| :--- | :--- | :--- |
-| `static FromQuery(IEnumerable<KeyValuePair<string, string?>> query, DataListSchema schema, string? prefix = null)` | `DataListState` | Reads a state from query keys. Starts from the schema defaults, so an empty query gives `DataListSchema.DefaultState`. Never throws on bad input: unknown filter keys, operators the filter does not allow, values that do not parse, unknown or repeated sort keys and an unknown layout are dropped (the default applies); the page is clamped to 1..`DataListState.MaxPage` and the page size to 1..`DataListSchema.MaxPageSize`. |
-| `static FromQuery(IEnumerable<KeyValuePair<string, string?>> query, DataListSchema schema, string? prefix, string? timeZone)` | `DataListState` | `DataListStateQuery.FromQuery` for a request that has a time zone: a date-time in a filter value without an offset (`2026-11-05T14:00`, what the `datetime-local` field of a static form posts) is the wall clock of that zone, not UTC. A date (`2026-11-05`) and a value with an offset do not depend on it. |
-| `static ToQuery(DataListState state, DataListSchema schema, string? prefix = null)` | `IReadOnlyDictionary<string, string>` | Writes the keys of a state that differ from the defaults. Rules the schema does not accept are left out, so the result always reads back. |
-
-#### `FilterRuleText`
-
-`Klyroo.Query` · service
-
-The text form of a filter rule's value in a URL: tokens separated by commas, where `,``~` and `%` inside a value are written `%2C``%7E``%25`, a bare `~` token means "include empty rows", a range is `from..to` (either side may be missing), numbers use the invariant culture (a dot) and dates are ISO 8601 (`yyyy-MM-dd` for a day, the round-trip format for an instant).
-
 | Field | Type | Description |
 | :--- | :--- | :--- |
-| `const IncludeEmptyToken = "~"` | `string` | The bare token that means "include empty rows" (`~`). |
+| `const IncludeEmptyToken = "~"` | `string` | The bare token that means "include empty rows" in the text of a filter rule (`~`). |
 
 | Method | Returns | Description |
 | :--- | :--- | :--- |
-| `static Escape(string value)` | `string` | Writes a value into the URL text of a rule: `,``~` and `%` become `%2C``%7E``%25`. |
-| `static Format(FilterRule rule)` | `string` | The value text of a rule: payload tokens, then the include-empty token when set. |
-| `static OperatorName(FilterOperator op)` | `string` | The URL name of an operator: its name in camelCase (`notContains`). |
-| `static Parse(DataListFilter filter, string key, FilterOperator op, string raw, TimeZoneInfo? zone = null)` | `FilterRule?` | Reads a rule from its URL text, or returns `null` when the text does not fit the filter. A date-time without an offset (`2026-11-05T14:00`, what a `datetime-local` field of a static form posts) is the wall clock of `zone` (UTC when it is null), like the time field of the interactive editor; with an offset (`Z`, `+01:00`) it is that instant. |
-| `static TryParseOperator(string text, out FilterOperator op)` | `bool` | Reads the URL name of an operator (case-insensitive; a number is not a name). |
-| `static Unescape(string value)` | `string` | The inverse of `FilterRuleText.Escape`. |
+| `static EscapeValue(string value)` | `string` | Writes one value into the text of a filter rule: `,``~` and `%` become `%2C``%7E``%25`, so that a form field holds a value the reader takes back unchanged. |
+| `static FilterParameterName(string key, FilterOperator op, DataListFilter? filter = null)` | `string` | The name, without the list prefix, of the query key that carries the rule of a filter: `f.status` for the default operator of the filter, `f.status.isNot` for another one. A form that submits a filter as GET fields uses it, so its fields are the keys `DataListStateQuery.FromQuery` reads. |
+| `static FromQuery(IEnumerable<KeyValuePair<string, string?>> query, DataListSchema schema, string? prefix = null)` | `DataListState` | Reads a state from query keys. Starts from the schema defaults, so an empty query gives `DataListSchema.DefaultState`. Never throws on bad input: unknown filter keys, operators the filter does not allow, values that do not parse, unknown or repeated sort keys and an unknown layout are dropped (the default applies); the page is clamped to 1..`DataListState.MaxPage` and the page size to 1..`DataListSchema.MaxPageSize`. |
+| `static FromQuery(IEnumerable<KeyValuePair<string, string?>> query, DataListSchema schema, string? prefix, string? timeZone)` | `DataListState` | `DataListStateQuery.FromQuery` for a request that has a time zone: a date-time in a filter value without an offset (`2026-11-05T14:00`, what the `datetime-local` field of a static form posts) is the wall clock of that zone, not UTC. A date (`2026-11-05`) and a value with an offset do not depend on it. |
+| `static OperatorName(FilterOperator op)` | `string` | The name of an operator in a query key: its name in camelCase (`notContains`). |
+| `static ToQuery(DataListState state, DataListSchema schema, string? prefix = null)` | `IReadOnlyDictionary<string, string>` | Writes the keys of a state that differ from the defaults. Rules the schema does not accept are left out, so the result always reads back. |
 
 #### `InMemoryDataList`
 
@@ -54,7 +42,7 @@ Runs a `DataListRequest` against an in-memory list: search, filter tree, stable 
 
 `Klyroo.Query` · service
 
-The instant of a local day and time in a time zone, with one rule for the two cases a wall clock does not name one instant. The server (the day and unit bounds of `DateUnit`), the filter editor of the data list and the reading of a posted date-time field all use it, so they cannot disagree on a day that starts in a gap.
+This type exists for the Klyroo packages (Klyroo.Table uses it in its filter editor) and is not meant for application code; it may change without notice. The instant of a local day and time in a time zone, with one rule for the two cases a wall clock does not name one instant. The server (the day and unit bounds of `DateUnit`), the filter editor of the data list and the reading of a posted date-time field all use it, so they cannot disagree on a day that starts in a gap.
 
 | Method | Returns | Description |
 | :--- | :--- | :--- |
@@ -354,7 +342,7 @@ The schema of a row type `T`: a `DataListSchema` that can also read a row's key 
 | :--- | :--- | :--- |
 | `GetRowKey(T item)` | `string` | The stable key of a row, as text (invariant culture). |
 | `GetRowLabel(T item)` | `string?` | The label that names a row for accessibility ("Select Alice"), or `null`. |
-| `ReadField(T item, string key)` | `object?` | The value of a field for a row, null-safe along its path (a null `Department` gives `null`, not an exception). The elements of a collection field are joined by commas. Returns `null` for a key that is not a field of the schema. |
+| `ReadField(T item, string key)` | `object?` | The value of a field for a row, null-safe along its path (a null `Department` gives `null`, not an exception). The elements of a collection field are joined by commas. Returns `null` for a key that is not a field of the schema. This member exists for the Klyroo packages (the data list reads its cells with it) and is not meant for application code; it may change without notice. |
 
 #### `DataListSchemaBuilder<T>`
 
@@ -469,11 +457,7 @@ The counts of one facet.
 
 `Klyroo.Query` · record
 
-What a data list component needs to know about a registered field of a `DataListSchema`, without the expression machinery behind it.
-
-| Constructor | Description |
-| :--- | :--- |
-| `DataListFieldInfo(string Key, bool Sortable, bool IsCollection, DataListFilter? Filter)` | What a data list component needs to know about a registered field of a `DataListSchema`, without the expression machinery behind it. |
+What a data list component needs to know about a registered field of a `DataListSchema`, without the expression machinery behind it. Read it from `DataListSchema.FieldInfos`.
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
