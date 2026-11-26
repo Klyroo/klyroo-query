@@ -26,15 +26,17 @@ internal sealed class DataListField<T>
     public bool IsCollection => Source.IsCollection;
 
     /// <summary>The values are numbers, dates, times, GUIDs or booleans (see <see cref="DataListFieldInfo.HasStructuredValue"/>).</summary>
-    public bool HasStructuredValue
+    public bool HasStructuredValue => IsStructuredType(Accessor.UnderlyingType);
+
+    /// <summary>Whether the field is declared <see cref="object"/>, so that only the runtime type of each value tells.</summary>
+    public bool IsDeclaredObject => !IsCollection && Accessor.UnderlyingType == typeof(object);
+
+    public static bool IsStructuredType(Type type)
     {
-        get
-        {
-            var type = Accessor.UnderlyingType;
-            return TextConvert.IsNumeric(type) || type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(DateOnly)
-                || type == typeof(TimeOnly) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(bool)
-                || type == typeof(Int128) || type == typeof(UInt128) || type == typeof(nint) || type == typeof(nuint);
-        }
+        type = Nullable.GetUnderlyingType(type) ?? type;
+        return TextConvert.IsNumeric(type) || type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(DateOnly)
+            || type == typeof(TimeOnly) || type == typeof(TimeSpan) || type == typeof(Guid) || type == typeof(bool)
+            || type == typeof(Int128) || type == typeof(UInt128) || type == typeof(nint) || type == typeof(nuint);
     }
 
     public bool Sortable { get; }

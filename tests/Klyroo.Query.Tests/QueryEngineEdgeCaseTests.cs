@@ -302,6 +302,24 @@ public sealed class QueryEngineEdgeCaseTests : BunitContext
     }
 
     [Fact]
+    public void An_object_field_is_structured_by_the_runtime_type_of_each_value()
+    {
+        var schema = DataListSchema.For<Anything>(s => s
+            .Field(a => a.Typed, f => f.Key("typed"))
+            .Field(a => a.Text, f => f.Key("text"))
+            .Field(a => a.Value, f => f.Key("value")));
+        Assert.True(schema.HasStructuredValueFor(new Anything(1, "t", "x"), "typed"));
+        Assert.False(schema.HasStructuredValueFor(new Anything(1, "t", "x"), "text"));
+        Assert.False(schema.HasStructuredValueFor(new Anything(1, "t", "x"), "value"));
+        Assert.True(schema.HasStructuredValueFor(new Anything(1, "t", 5), "value"));
+        Assert.True(schema.HasStructuredValueFor(new Anything(1, "t", new DateTime(2024, 1, 1)), "value"));
+        Assert.False(schema.HasStructuredValueFor(new Anything(1, "t", null), "value"));
+        Assert.False(schema.HasStructuredValueFor(new Anything(1, "t", 5), "nope"));
+    }
+
+    private sealed record Anything(int Typed, string Text, object? Value);
+
+    [Fact]
     public void TryReadNumber_reads_numeric_fields_only_and_CompareField_sorts_like_the_executor()
     {
         var schema = DataListSchema.For<Product>(s => s

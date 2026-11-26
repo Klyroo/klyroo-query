@@ -350,6 +350,22 @@ public sealed class DataListSchema<T> : DataListSchema
     }
 
     /// <summary>
+    /// Whether the value of a field for a row is a number, date, time, GUID or boolean, the text of which the type writes and a person does not type. It follows
+    /// <see cref="DataListFieldInfo.HasStructuredValue"/>, except for a field declared <see cref="object"/>, where the runtime type of the value decides (a null is not structured).
+    /// Returns <see langword="false"/> for a key that is not a field of the schema.
+    /// This member exists for the Klyroo packages and is not meant for application code; it may change without notice.
+    /// </summary>
+    /// <param name="item">The row.</param>
+    /// <param name="key">The key of the field.</param>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+    public bool HasStructuredValueFor(T item, string key)
+    {
+        if (!_fields.TryGetValue(key, out var field)) return false;
+        if (!field.IsDeclaredObject) return field.HasStructuredValue;
+        return field.Getter(item) is { } value && DataListField<T>.IsStructuredType(value.GetType());
+    }
+
+    /// <summary>
     /// Compares two rows by a field in the order a sort on that field gives: strings in natural order, numbers and dates by value, nulls last.
     /// Returns 0 for a key that is not a field of the schema and for a collection field.
     /// This member exists for the Klyroo packages and is not meant for application code; it may change without notice.
