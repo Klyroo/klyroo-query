@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- A documentation site at https://klyroo.github.io/klyroo-query/, built from `README.md` and `docs/` and published by `.github/workflows/docs.yml` (the build is `docs-site/` of klyroo-stack). `docs/site.yml` sets the title, tagline, install command, NuGet packages, order of the pages and accent color; the Markdown files themselves are read as they are.
 - `QueryState.Snapshot(prefix)`, `DataListSchema<T>.FieldInfos` (with the `DataListFieldInfo` class, read-only and built by the schema), `DataListSchema.DefaultFieldKey`, and `DataListStateQuery.FilterParameterName`, `OperatorName`, `EscapeValue` and `IncludeEmptyToken`: the API Klyroo.Table needs, documented, so a list component of your own can be built on the query layer. `DataListSchema<T>.FormatField`, `TryReadNumber`, `CompareField` and `LocalInstants` are public for the Klyroo packages only and hidden from IntelliSense. `FilterRuleText` stays internal.
 
 ### Changed
