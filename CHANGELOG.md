@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - The documentation of `DataListFilter.Persist` and `WithPersist` says what reads them: a list component such as `KlyDataList` of Klyroo.Table, which keeps the value in `localStorage` in the URL form of `DataListStateQuery`. The executors and the URL codecs still ignore the flag.
 
+### Fixed
+
+- The FAQ headings set only the identifiers in code, so a heading reads as a heading.
+
 ## [0.1.0-preview.1] - 2026-11-24
 
 ### Added
