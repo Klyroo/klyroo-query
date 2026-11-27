@@ -4,7 +4,7 @@ Troubleshooting, known limitations and frequent questions. Each troubleshooting 
 
 ## Troubleshooting
 
-### `QueryState does not know whether the renderer is interactive`
+### `QueryState` does not know whether the renderer is interactive
 
 **Symptom.** `Set` or `SetMany` throws `InvalidOperationException`: "QueryState does not know whether the renderer is interactive, and writing from a prerender or a static render would redirect the request."
 
@@ -28,7 +28,7 @@ Troubleshooting, known limitations and frequent questions. Each troubleshooting 
 
 **Fix.** Put the query in the URL you navigate to (`Navigation.NavigateTo("/details/5?tab=notes")`) instead of writing and then navigating. A write is for the page that is showing.
 
-### `The prefix '...' of the query string is already claimed by '...'`
+### The prefix '...' of the query string is already claimed by '...'
 
 **Symptom.** Creating a group or claiming a prefix throws `InvalidOperationException` naming two owners, or, in a component that survived a page change, `ThrowIfConflicted` throws on first use.
 
@@ -60,7 +60,7 @@ Troubleshooting, known limitations and frequent questions. Each troubleshooting 
 
 **Fix.** Send the IANA id of the user's zone with each request (`state.ToRequest(timeZone: "Europe/Paris")`), and pass it to `DataListStateQuery.FromQuery` when reading a URL on the server. See [Filter dates in the user's time zone](guides.md#filter-dates-in-the-users-time-zone). A zone id the server does not know is cleared and means UTC.
 
-### `Apply and FacetQueries are for a database provider`
+### `Apply` and `FacetQueries` are for a database provider
 
 **Symptom.** `Apply` or `FacetQueries` throws `InvalidOperationException` on a list you turned into a query with `AsQueryable()`.
 
@@ -68,7 +68,7 @@ Troubleshooting, known limitations and frequent questions. Each troubleshooting 
 
 **Fix.** Use `schema.ExecuteInMemory(items, request)` for collections.
 
-### `An offset result carries the total count`
+### An offset result carries the total count
 
 **Symptom.** `ToResult` throws for an offset request.
 
@@ -76,7 +76,7 @@ Troubleshooting, known limitations and frequent questions. Each troubleshooting 
 
 **Fix.** Count `query.Matching` (when `query.WantsTotal`, which is always true for offset and unpaged requests) and pass it as `totalCount`.
 
-### `A cursor is made from the sort values of the last row`
+### A cursor is made from the sort values of the last row
 
 **Symptom.** `ToResult` throws for a cursor request when you pass entities.
 
@@ -100,7 +100,7 @@ Troubleshooting, known limitations and frequent questions. Each troubleshooting 
 
 **Fix.** Drop the cursor when the sort, filter or search changes, and start again from `null`.
 
-### SQLite throws `SQLite does not support expressions of type 'DateTimeOffset' in ORDER BY clauses`
+### SQLite throws "SQLite does not support expressions of type '`DateTimeOffset`' in ORDER BY clauses"
 
 **Symptom.** `Apply` over an EF Core SQLite context fails at run time when a `DateTimeOffset` field is sorted or compared.
 
@@ -116,7 +116,7 @@ Troubleshooting, known limitations and frequent questions. Each troubleshooting 
 
 **Fix.** Use a column type or collation your provider honors for case-insensitive search, or accept that a search is as case-sensitive as your database. Do not compare `ExecuteInMemory` results and database results for text and expect them to match.
 
-### `The key '...' is used by two fields` or `The field is not a plain member access`
+### "The key '...' is used by two fields" or "The field is not a plain member access"
 
 **Symptom.** `DataListSchema.For` throws `InvalidOperationException` when the schema is declared.
 
@@ -124,7 +124,7 @@ Troubleshooting, known limitations and frequent questions. Each troubleshooting 
 
 **Fix.** Give the field a distinct key with `f.Key("...")`. A key must be non-empty, contain no whitespace, `|`, `=` or `&`, and not start with `-`.
 
-### `The facet '...' is on a collection`
+### The facet '...' is on a collection
 
 **Symptom.** `FacetQueries` throws for a facet on a collection field.
 
