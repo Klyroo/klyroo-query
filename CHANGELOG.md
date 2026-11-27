@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- The ecosystem table of the README describes Klyroo.Display by what it keeps (code highlighting, secret and file list components, media player controls and file preview), since its read-only display blocks are typed components of Klyroo.UI.
 - `Klyroo.Query.Core` is about 1.5 KB smaller: the internal `DateUnit` is a plain struct instead of a record struct, because nothing compared, printed or deconstructed it. No public API changes.
 
 - **Breaking:** `DataListSchema<T>.ReadField`, which returned a boxed `object?`, is replaced by `FormatField(item, key, format, provider)` (the text of a field, null-safe, collections joined by commas), `TryReadNumber(item, key, out decimal)` (a numeric field for totals and averages) and `CompareField(first, second, key)` (the sort order of two rows by a field). `DataListFieldInfo.HasStructuredValue` tells whether a field holds numbers, dates, times, GUIDs or booleans, and `HasStructuredValueFor(item, key)` answers for one row (a field declared `object` is decided by the type of its value).
